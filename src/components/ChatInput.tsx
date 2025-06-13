@@ -1,15 +1,33 @@
 import React from "react";
 import { ArrowUp, ChevronDown, Globe, Paperclip } from "lucide-react";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "./ui/dropdown-menu";
+import { ReasoningControls } from "./ReasoningControls";
+import { Model, ReasoningConfig } from "@/types/models";
 
 interface ChatInputProps {
   value?: string;
   onInputChange?: (value: string) => void;
+  selectedModel?: Model;
+  availableModels?: Model[];
+  reasoningConfig?: ReasoningConfig;
+  onModelChange?: (model: Model) => void;
+  onReasoningConfigChange?: (config: Partial<ReasoningConfig>) => void;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
   value = "",
   onInputChange,
+  selectedModel,
+  availableModels = [],
+  reasoningConfig,
+  onModelChange,
+  onReasoningConfigChange,
 }) => {
   return (
     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none z-10 w-full">
@@ -72,17 +90,51 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     </div>
                     <div className="flex items-center gap-2 pr-2 text-center">
                       <div className="flex items-center gap-1 -ml-2 text-center">
-                        <Button
-                          type="button"
-                          aria-haspopup="menu"
-                          aria-expanded="false"
-                          className="flex items-center justify-center gap-2 h-8 bg-transparent border-0 text-[rgb(231,208,221)] font-medium text-xs rounded-md transition-colors duration-150 px-2 py-1.5 -mb-2 hover:bg-transparent"
-                        >
-                          <div className="text-[rgb(231,208,221)] text-sm font-medium text-left whitespace-nowrap">
-                            Gemini 2.5 Flash
-                          </div>
-                          <ChevronDown className="w-6 h-6 text-[rgb(231,208,221)] right-0" />
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              type="button"
+                              aria-haspopup="menu"
+                              aria-expanded="false"
+                              className="flex items-center justify-center gap-2 h-8 bg-transparent border-0 text-[rgb(231,208,221)] font-medium text-xs rounded-md transition-colors duration-150 px-2 py-1.5 -mb-2 hover:bg-transparent"
+                            >
+                              <div className="text-[rgb(231,208,221)] text-sm font-medium text-left whitespace-nowrap">
+                                {selectedModel?.name || 'Select Model'}
+                              </div>
+                              <ChevronDown className="w-6 h-6 text-[rgb(231,208,221)] right-0" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="start"
+                            className="w-64 bg-[rgb(26,20,25)] border-[rgba(54,45,61,0.7)] text-[rgb(231,208,221)]"
+                          >
+                            {availableModels.map((model) => (
+                              <DropdownMenuItem
+                                key={model.id}
+                                onClick={() => onModelChange?.(model)}
+                                className="hover:bg-[rgba(54,45,61,0.4)] focus:bg-[rgba(54,45,61,0.4)] flex flex-col items-start"
+                              >
+                                <div className="font-medium">{model.name}</div>
+                                <div className="text-xs text-[rgb(212,199,225)] opacity-75">
+                                  {model.provider}
+                                  {model.supportsReasoning && (
+                                    <span className="ml-2 text-[rgb(163,0,76)]">• Reasoning</span>
+                                  )}
+                                </div>
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        {/* Reasoning Controls */}
+                        {selectedModel && reasoningConfig && onReasoningConfigChange && (
+                          <ReasoningControls
+                            model={selectedModel}
+                            reasoningConfig={reasoningConfig}
+                            onReasoningConfigChange={onReasoningConfigChange}
+                            className="-mb-2"
+                          />
+                        )}
                         <Button
                           aria-label="Web search not available on free plan"
                           type="button"
