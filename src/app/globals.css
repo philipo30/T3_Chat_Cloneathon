@@ -15,53 +15,129 @@
   }
 
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --gradient-noise-top: 313 20% 20%;
-    --chat-border: 313 20% 16%;
+    --background: 0 0% 100%; /* White */
+    --foreground: 59, 28, 62; /* Dark Purple for text */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 59, 28, 62;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 59, 28, 62;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 191, 75, 133; /* Pink/Magenta */
+    --primary-foreground: 255, 255, 255; /* White */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 248, 242, 250; /* Light Pink BG */
+    --secondary-foreground: 82, 60, 84; /* Medium Purple Text */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 248, 242, 250;
+    --muted-foreground: 117, 98, 118; /* Lighter Purple/Grey Text */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 245, 238, 248; /* Sidebar BG */
+    --accent-foreground: 82, 60, 84;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 255, 0, 0; /* Red - placeholder */
+    --destructive-foreground: 255, 255, 255;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 233, 224, 236; /* Light pink border */
+    --input: 233, 224, 236;
+    --ring: 191, 75, 133;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* App Page */
+    --app-page-background: 250, 245, 252;
+    --app-page-gradient-start: 228, 198, 228;
+    --app-page-gradient-mid: 233, 213, 255;
+    --app-page-gradient-end: 250, 245, 252;
+    --app-page-overlay: 255, 255, 255;
+    --app-main-background: 255, 255, 255;
+    --app-main-border: 233, 224, 236;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Primary Button */
+    --primary-button-gradient-from: 191, 75, 133;
+    --primary-button-gradient-to: 169, 58, 114;
+    --primary-button-hover-gradient-from: 201, 85, 143;
+    --primary-button-hover-gradient-to: 179, 68, 124;
+    --primary-button-text: 255, 255, 255;
+    --primary-button-border: 191, 75, 133;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* ChatInput */
+    --chat-input-upgrade-text: 82, 60, 84;
+    --chat-input-terms-backdrop: 248, 242, 250;
+    --chat-input-terms-border: 233, 224, 236;
+    --chat-input-terms-text: 82, 60, 84;
+    --chat-input-backdrop: 248, 242, 250;
+    --chat-input-form-background: 248, 242, 250;
+    --chat-input-form-border: 226, 194, 221;
+    --chat-input-text: 82, 60, 84;
+    --chat-input-outline: 248, 242, 250;
+    --chat-input-send-button-background: 224, 185, 218;
+    --chat-input-send-button-hover-background: 214, 175, 208;
+    --chat-input-send-button-text: 59, 28, 62;
+    --chat-input-send-button-border: 224, 185, 218;
+    --chat-input-button-text: 82, 60, 84;
+    --chat-input-button-border: 233, 224, 236;
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Login Form */
+    --login-form-background: 255, 255, 255;
+    --login-form-title-text: 59, 28, 62;
+    --login-form-description-text: 82, 60, 84;
+    --login-form-error-text: 220, 38, 38; /* red-600 */
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    /* Sidebar */
+    --sidebar-background: 245, 238, 248;
+    --sidebar-foreground: 82, 60, 84;
+    --sidebar-component-hidden-background: 245, 238, 248;
+    --sidebar-component-button-text: 82, 60, 84;
+    --sidebar-component-button-hover-text: 59, 28, 62;
+    --sidebar-component-button-hover-background: 233, 224, 236;
+    --sidebar-component-title-text: 59, 28, 62;
+    --sidebar-component-search-border: 233, 224, 236;
+    --sidebar-component-search-icon-text: 117, 98, 118;
+    --sidebar-component-search-placeholder: 117, 98, 118;
+    --sidebar-component-user-info-text: 59, 28, 62;
+    --sidebar-loader-background: 0, 0, 0;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    /* Logout Button */
+    --logout-button-text: 82, 60, 84;
 
-    --sidebar-border: 220 13% 91%;
+    /* Welcome Screen */
+    --welcome-screen-title-text: 59, 28, 62;
+    --welcome-screen-button-background: 248, 242, 250;
+    --welcome-screen-button-hover-background: 245, 238, 248;
+    --welcome-screen-button-border: 233, 224, 236;
+    --welcome-screen-button-text: 82, 60, 84;
+    --welcome-screen-button-selected-background: 239, 224, 236;
+    --welcome-screen-button-selected-hover-background: 235, 218, 232;
+    --welcome-screen-button-selected-border: 191, 75, 133;
+    --welcome-screen-button-selected-text: 59, 28, 62;
+    --welcome-screen-question-border: 233, 224, 236;
+    --welcome-screen-question-text: 82, 60, 84;
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Top Bar */
+    --top-bar-icon-color: 255, 255, 255;
+
+    /* chat messages */
+    --chat-message-user-avatar-bg: 59, 130, 246;
+    --chat-message-user-avatar-text: 255, 255, 255;
+    --chat-message-bot-avatar-bg: 30, 41, 59;
+    --chat-message-bot-avatar-text: 255, 255, 255;
+    --chat-message-text: 82, 60, 84;
+    --chat-message-username: 176, 179, 184;
+    --chat-message-link: 59, 130, 246;
+    --chat-code-block-bg: 245, 238, 248; /* Light purple background */
+    --chat-code-inline-bg: 248, 242, 250; /* Lighter purple for inline code */
+    --chat-code-block-content-bg: 240, 230, 245; /* Slightly darker for content area */
+    --chat-code-block-border: 233, 224, 236; /* Purple border */
+    --chat-code-block-text: 59, 28, 62; /* Dark purple text */
+
+    /* chat bubbles */
+    --chat-bubble-user-bg: 191, 75, 133; /* Primary pink/magenta */
+    --chat-bubble-user-text: 255, 255, 255; /* White text */
+    --chat-bubble-ai-bg: 248, 242, 250; /* Light pink background */
+    --chat-bubble-ai-text: 82, 60, 84; /* Dark purple text */
+    --chat-bubble-ai-border: 233, 224, 236; /* Light pink border */
   }
 
   .dark {
@@ -92,14 +168,99 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    /* App Page */
+    --app-page-background: 19, 19, 20;
+    --app-page-gradient-start: 255, 1, 111;
+    --app-page-gradient-mid: 63, 51, 69;
+    --app-page-gradient-end: 7, 3, 9;
+    --app-page-overlay: 0, 0, 0;
+    --app-main-background: 31, 26, 36;
+    --app-main-border: 50, 32, 40;
+
+    /* Primary Button */
+    --primary-button-gradient-from: 92, 45, 71;
+    --primary-button-gradient-to: 59, 19, 42;
+    --primary-button-hover-gradient-from: 108, 53, 85;
+    --primary-button-hover-gradient-to: 75, 33, 58;
+    --primary-button-text: 255, 255, 255;
+    --primary-button-border: 126, 60, 95;
+
+    /* ChatInput */
+    --chat-input-upgrade-text: 231, 208, 221;
+    --chat-input-terms-backdrop: 31, 26, 36;
+    --chat-input-terms-border: 54, 45, 61;
+    --chat-input-terms-text: 212, 199, 225;
+    --chat-input-backdrop: 51, 46, 56;
+    --chat-input-form-background: 54, 45, 61;
+    --chat-input-form-border: 212, 212, 212;
+    --chat-input-text: 212, 199, 225;
+    --chat-input-outline: 31, 26, 36;
+    --chat-input-send-button-background: 163, 0, 76;
+    --chat-input-send-button-hover-background: 183, 20, 96;
+    --chat-input-send-button-text: 253, 242, 248;
+    --chat-input-send-button-border: 39, 36, 44;
+    --chat-input-button-text: 231, 208, 221;
+    --chat-input-button-border: 212, 199, 225;
+
+    /* Login Form */
+    --login-form-background: 31, 26, 36;
+    --login-form-title-text: 231, 208, 221;
+    --login-form-description-text: 231, 208, 221;
+    --login-form-error-text: 251, 113, 133;
+
+    /* Sidebar */
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-component-hidden-background: 26, 20, 25;
+    --sidebar-component-button-text: 231, 208, 221;
+    --sidebar-component-button-hover-text: 255, 255, 255;
+    --sidebar-component-button-hover-background: 107, 114, 128;
+    --sidebar-component-title-text: 231, 208, 221;
+    --sidebar-component-search-border: 50, 32, 40;
+    --sidebar-component-search-icon-text: 231, 208, 221;
+    --sidebar-component-search-placeholder: 231, 208, 221;
+    --sidebar-component-user-info-text: 231, 208, 221;
+    --sidebar-loader-background: 255, 255, 255;
+
+    /* Logout Button */
+    --logout-button-text: 212, 199, 225;
+
+    /* Welcome Screen */
+    --welcome-screen-title-text: 255, 255, 255;
+    --welcome-screen-button-background: 54, 45, 61;
+    --welcome-screen-button-hover-background: 64, 55, 71;
+    --welcome-screen-button-border: 54, 45, 61;
+    --welcome-screen-button-text: 212, 199, 225;
+    --welcome-screen-button-selected-background: 69, 26, 50;
+    --welcome-screen-button-selected-hover-background: 123, 28, 68;
+    --welcome-screen-button-selected-border: 127, 45, 81;
+    --welcome-screen-button-selected-text: 242, 195, 220;
+    --welcome-screen-question-border: 54, 45, 61;
+    --welcome-screen-question-text: 212, 199, 225;
+
+    /* Top Bar */
+    --top-bar-icon-color: 231, 208, 221;
+
+    --chat-message-user-avatar-bg: 59, 130, 246;
+    --chat-message-user-avatar-text: 255, 255, 255;
+    --chat-message-bot-avatar-bg: 30, 41, 59;
+    --chat-message-bot-avatar-text: 255, 255, 255;
+    --chat-message-text: 255, 255, 255;
+    --chat-message-username: 212, 199, 225;
+    --chat-message-link: 59, 130, 246;
+    --chat-code-block-bg: 54, 45, 61; /* Dark purple background */
+    --chat-code-inline-bg: 64, 55, 71; /* Slightly lighter for inline code */
+    --chat-code-block-content-bg: 44, 35, 51; /* Darker purple for content area */
+    --chat-code-block-border: 82, 60, 84; /* Purple border */
+    --chat-code-block-text: 212, 199, 225; /* Light purple text */
+
+    /* chat bubbles - dark mode */
+    --chat-bubble-user-bg: 191, 75, 133; /* Primary pink/magenta */
+    --chat-bubble-user-text: 255, 255, 255; /* White text */
+    --chat-bubble-ai-bg: 54, 45, 61; /* Dark purple background */
+    --chat-bubble-ai-text: 212, 199, 225; /* Light purple text */
+    --chat-bubble-ai-border: 82, 60, 84; /* Medium purple border */
   }
 
   html {
@@ -111,6 +272,126 @@
     @apply bg-background text-foreground font-sans;
     margin: 0;
     padding: 0;
+  }
+
+  /* Enhanced scrollbar styling for markdown code blocks */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-\[rgb\(var\(--border-color\)\)\]\/30::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--border-color) / 0.3);
+    border-radius: 4px;
+  }
+
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--border-color) / 0.3);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--border-color) / 0.5);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Smooth animations for markdown elements */
+  .markdown-content {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Enhanced focus styles for accessibility */
+  .markdown-content a:focus,
+  .markdown-content button:focus {
+    outline: 2px solid rgb(var(--chat-message-link));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Math equation styling */
+  .katex {
+    font-size: 1.1em;
+  }
+
+  .katex-display {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgb(var(--secondary) / 0.3);
+    border-radius: 8px;
+    border: 1px solid rgb(var(--border) / 0.3);
+  }
+
+  /* macOS-style window controls animations */
+  @keyframes macosButtonHover {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.1);
+    }
+  }
+
+  .macos-control:hover {
+    animation: macosButtonHover 0.2s ease-in-out;
+  }
+
+  /* Code block state transitions */
+  @keyframes slideDown {
+    from {
+      max-height: 0;
+      opacity: 0;
+    }
+    to {
+      max-height: 500px;
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      max-height: 500px;
+      opacity: 1;
+    }
+    to {
+      max-height: 0;
+      opacity: 0;
+    }
+  }
+
+  /* Enhanced focus states for window controls */
+  .macos-control:focus {
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+    border-radius: 50%;
+  }
+
+  /* Fullscreen overlay */
+  .fullscreen-overlay {
+    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -128,6 +409,796 @@
 
 .animate-fade-out {
   animation: fade-out 0.3s ease forwards;
+}
+
+/* Comprehensive Markdown Styling with Theme Integration */
+.markdown-content {
+  /* Prevent horizontal overflow of the entire markdown container */
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  /* Handle long URLs and unbroken text */
+  hyphens: auto;
+  /* Smooth transitions for better UX */
+  transition: opacity 0.2s ease;
+}
+
+/* Headers with consistent hierarchy */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  color: rgb(var(--chat-message-text));
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.markdown-content h1 { font-size: 1.875rem; border-bottom: 2px solid rgba(var(--chat-message-username), 0.3); padding-bottom: 0.5rem; }
+.markdown-content h2 { font-size: 1.5rem; border-bottom: 1px solid rgba(var(--chat-message-username), 0.2); padding-bottom: 0.25rem; }
+.markdown-content h3 { font-size: 1.25rem; }
+.markdown-content h4 { font-size: 1.125rem; }
+.markdown-content h5 { font-size: 1rem; }
+.markdown-content h6 { font-size: 0.875rem; opacity: 0.9; }
+
+/* Paragraphs and text */
+.markdown-content p {
+  margin: 0.75rem 0;
+  line-height: 1.6;
+  color: rgb(var(--chat-message-text));
+}
+
+/* Links with theme integration */
+.markdown-content a {
+  color: rgb(var(--primary-button-gradient-from)) !important;
+  text-decoration: none;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  transition: opacity 0.2s ease;
+}
+
+.markdown-content a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Enhanced Lists */
+.markdown-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  max-width: 100%;
+}
+
+.markdown-list-unordered {
+  list-style-type: disc;
+}
+
+.markdown-list-ordered {
+  list-style-type: decimal;
+}
+
+.markdown-content li {
+  margin: 0.25rem 0;
+  line-height: 1.6;
+  color: rgb(var(--chat-message-text));
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.markdown-content li::marker {
+  color: rgb(var(--chat-message-username));
+}
+
+/* Nested lists */
+.markdown-content ul ul,
+.markdown-content ol ol,
+.markdown-content ul ol,
+.markdown-content ol ul {
+  margin: 0.25rem 0;
+  padding-left: 1.25rem;
+}
+
+.markdown-content ul ul {
+  list-style-type: circle;
+}
+
+.markdown-content ul ul ul {
+  list-style-type: square;
+}
+
+/* Enhanced Code Block Styling */
+.code-block-wrapper {
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  background: rgb(var(--chat-code-block-bg));
+  border: 1px solid rgba(var(--chat-message-username), 0.2);
+  overflow: hidden;
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: rgba(var(--chat-message-username), 0.1);
+  border-bottom: 1px solid rgba(var(--chat-message-username), 0.2);
+}
+
+.code-language {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgb(var(--chat-message-username));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.code-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: rgb(var(--chat-message-username));
+  background: transparent;
+  border: 1px solid rgba(var(--chat-message-username), 0.3);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.code-copy-btn:hover {
+  background: rgba(var(--primary-button-gradient-from), 0.1);
+  border-color: rgb(var(--primary-button-gradient-from));
+  color: rgb(var(--primary-button-gradient-from));
+}
+
+.code-block {
+  margin: 0;
+  padding: 1rem;
+  background: rgb(var(--chat-code-block-bg));
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  white-space: pre;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.code-block code {
+  color: #f8f8f2;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+/* Fallback for regular pre blocks */
+.markdown-content pre {
+  background-color: rgb(var(--chat-code-block-bg)) !important;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  white-space: pre;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  margin: 1rem 0;
+}
+
+.markdown-content pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.markdown-content pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.markdown-content code:not(pre code) {
+  background-color: rgb(var(--chat-code-inline-bg)) !important;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  /* Allow inline code to break if necessary */
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.markdown-content a {
+  color: rgb(var(--chat-message-link)) !important;
+  text-decoration: none;
+  /* Allow long URLs to break */
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+/* Simple code styling without syntax highlighting */
+.markdown-content pre code {
+  color: #f8f8f2;
+  font-family: 'Courier New', Courier, monospace;
+  /* Ensure code inside pre blocks doesn't break */
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+/* Enhanced Table Styling */
+.markdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-size: 0.875rem;
+  background: rgba(var(--chat-message-username), 0.05);
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.markdown-table th {
+  background: rgba(var(--chat-message-username), 0.15);
+  color: rgb(var(--chat-message-text));
+  font-weight: 600;
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 2px solid rgba(var(--chat-message-username), 0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.markdown-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(var(--chat-message-username), 0.2);
+  color: rgb(var(--chat-message-text));
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.markdown-table tr:hover {
+  background: rgba(var(--chat-message-username), 0.08);
+}
+
+.markdown-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive table wrapper */
+.markdown-content .table-wrapper {
+  overflow-x: auto;
+  margin: 1rem 0;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Custom scrollbar for tables */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.markdown-content .table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.markdown-content .table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.markdown-content .table-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.markdown-content .table-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.markdown-content .table-wrapper table {
+  margin: 0;
+  border: none;
+  min-width: 100%;
+  width: max-content; /* Allow table to be wider than container if needed */
+}
+
+/* Long text handling */
+.markdown-content p,
+.markdown-content li,
+.markdown-content div {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+/* Handle very long unbroken strings (like file paths, hashes, etc.) */
+.markdown-content {
+  /* This will break extremely long words as a last resort */
+  word-break: break-word;
+}
+
+/* Enhanced Blockquotes */
+.markdown-blockquote {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  background: rgba(var(--chat-message-username), 0.08);
+  border-left: 4px solid rgb(var(--primary-button-gradient-from));
+  border-radius: 0 0.375rem 0.375rem 0;
+  font-style: italic;
+  color: rgb(var(--chat-message-text));
+  position: relative;
+}
+
+.markdown-blockquote::before {
+  content: '"';
+  font-size: 3rem;
+  color: rgba(var(--primary-button-gradient-from), 0.3);
+  position: absolute;
+  top: -0.5rem;
+  left: 0.5rem;
+  font-family: serif;
+  line-height: 1;
+}
+
+.markdown-blockquote p {
+  margin: 0.5rem 0;
+}
+
+.markdown-blockquote p:first-child {
+  margin-top: 0;
+}
+
+.markdown-blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Nested blockquotes */
+.markdown-blockquote .markdown-blockquote {
+  margin: 1rem 0;
+  border-left-color: rgba(var(--primary-button-gradient-from), 0.6);
+  background: rgba(var(--chat-message-username), 0.12);
+}
+
+/* Inline Code */
+.markdown-content code:not(pre code) {
+  background-color: rgb(var(--chat-code-inline-bg)) !important;
+  color: rgb(var(--primary-button-gradient-from));
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: 'Courier New', Courier, monospace;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  border: 1px solid rgba(var(--chat-message-username), 0.2);
+}
+
+/* Text Formatting */
+.markdown-content strong {
+  font-weight: 700;
+  color: rgb(var(--chat-message-text));
+}
+
+.markdown-content em {
+  font-style: italic;
+  color: rgb(var(--chat-message-text));
+}
+
+.markdown-content del {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* Horizontal Rules */
+.markdown-content hr {
+  max-width: 100%;
+  border: none;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--chat-message-username), 0.3) 20%,
+    rgba(var(--chat-message-username), 0.3) 80%,
+    transparent
+  );
+  margin: 2rem 0;
+}
+
+/* Images */
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(var(--chat-message-username), 0.2);
+}
+
+/* List overflow handling */
+.markdown-content ul,
+.markdown-content ol {
+  max-width: 100%;
+  padding-left: 1.5rem;
+}
+
+.markdown-content li {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Optimized streaming animations with enhanced states */
+.streaming-message {
+  animation: none; /* Remove pulse animation for better performance */
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  /* Optimize for animations */
+  will-change: contents;
+  /* Prevent subpixel rendering issues */
+  backface-visibility: hidden;
+}
+
+/* Smooth streaming cursor animation */
+@keyframes streaming-cursor {
+  0%, 50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  51%, 100% {
+    opacity: 0.3;
+    transform: scaleY(0.8);
+  }
+}
+
+.streaming-cursor {
+  animation: streaming-cursor 1.2s ease-in-out infinite;
+  transform-origin: bottom;
+  transition: all 0.2s ease;
+}
+
+/* Raw text display during rapid streaming */
+.streaming-raw-text {
+  /* Optimize for rapid text updates */
+  contain: layout style;
+  will-change: contents;
+  /* Disable all transitions for maximum performance */
+  transition: none !important;
+  /* Optimize text rendering for speed */
+  text-rendering: optimizeSpeed;
+  /* Prevent layout shifts */
+  line-height: 1.6;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Stable streaming state with smooth transitions */
+.streaming-stable {
+  /* Smooth transitions between raw and parsed content */
+  transition: opacity 0.15s ease-out;
+  /* Optimize rendering during stable streaming */
+  contain: layout style;
+  will-change: contents;
+}
+
+/* Complete state with full formatting */
+.markdown-content {
+  /* Smooth transitions when streaming completes */
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Prevent layout shifts during all streaming states */
+.streaming-message .prose,
+.streaming-raw-text,
+.streaming-stable {
+  /* Maintain consistent line height */
+  line-height: 1.6;
+  /* Prevent font size changes from causing jumps */
+  font-size: inherit;
+  /* Consistent spacing */
+  margin: 0;
+}
+
+/* Optimize paragraph rendering during streaming */
+.streaming-message .prose p,
+.streaming-raw-text p,
+.streaming-stable p {
+  /* Prevent margin changes during streaming */
+  margin-top: 0;
+  margin-bottom: 1rem;
+  /* Optimize text rendering */
+  text-rendering: optimizeSpeed;
+}
+
+/* Enhanced performance optimizations */
+.streaming-message .markdown-content,
+.streaming-stable,
+.streaming-raw-text {
+  /* GPU acceleration for smooth rendering */
+  transform: translateZ(0);
+  /* Optimize for content changes */
+  will-change: contents;
+  /* Prevent subpixel rendering issues */
+  backface-visibility: hidden;
+  /* Contain layout calculations */
+  contain: layout style;
+}
+
+/* Chat Bubble Styling */
+.chat-bubble-streaming {
+  /* Smooth animations during streaming */
+  transition: all 0.2s ease-out;
+}
+
+/* AI message styling without background */
+.chat-bubble-streaming:not(.bg-\[rgb\(var\(--chat-bubble-user-bg\)\)\]) {
+  /* Remove shadow for AI messages without background */
+  box-shadow: none;
+}
+
+/* Ensure chat messages stay within container boundaries */
+.chat-bubble-streaming {
+  /* Prevent overflow beyond parent container */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Invisible boundary enforcement - strict containment */
+.chat-message-boundary {
+  /* Create invisible line that messages cannot cross */
+  contain: layout style;
+  isolation: isolate;
+}
+
+/* Smooth gradient shadow overlay for elegant content fade-out */
+.chat-content-fade-overlay {
+  /* Enhanced gradient with multiple stops for smoother transition */
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--app-main-background)) 0%,
+    rgba(var(--app-main-background), 0.95) 20%,
+    rgba(var(--app-main-background), 0.8) 40%,
+    rgba(var(--app-main-background), 0.4) 70%,
+    transparent 100%
+  );
+
+  /* Subtle blur effect for natural fade */
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+
+  /* Smooth transitions for theme changes */
+  transition: background 0.2s ease-in-out;
+
+  /* Ensure it doesn't interfere with interactions */
+  pointer-events: none;
+
+  /* Position above content but below TopBar */
+  z-index: 10;
+}
+
+.chat-message-boundary,
+.chat-message-boundary *,
+.chat-bubble-streaming,
+.chat-bubble-streaming * {
+  /* Force all elements to respect container boundaries */
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+/* Chat bubble content styling */
+.chat-bubble-content {
+  /* Ensure content fits within bubble */
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  /* Prevent overflow beyond container */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* User message content styling */
+.chat-bubble-content.user-content {
+  /* Override default text colors for user bubbles */
+  color: inherit;
+}
+
+.chat-bubble-content.user-content .markdown-content {
+  /* Ensure markdown content inherits bubble text color */
+  color: inherit;
+}
+
+.chat-bubble-content.user-content .markdown-content h1,
+.chat-bubble-content.user-content .markdown-content h2,
+.chat-bubble-content.user-content .markdown-content h3,
+.chat-bubble-content.user-content .markdown-content h4,
+.chat-bubble-content.user-content .markdown-content h5,
+.chat-bubble-content.user-content .markdown-content h6,
+.chat-bubble-content.user-content .markdown-content p,
+.chat-bubble-content.user-content .markdown-content li,
+.chat-bubble-content.user-content .markdown-content strong,
+.chat-bubble-content.user-content .markdown-content em {
+  /* Override markdown text colors in user bubbles */
+  color: inherit !important;
+}
+
+/* AI message content styling */
+.chat-bubble-content.ai-content .markdown-content {
+  /* Use theme colors for AI message content */
+  color: rgb(var(--chat-bubble-ai-text));
+}
+
+/* Bubble shadows and hover effects - only for user messages with background */
+.chat-bubble-streaming.bg-\[rgb\(var\(--chat-bubble-user-bg\)\)\] {
+  /* Subtle shadow for depth on user messages */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive bubble sizing - removed max-width constraints to match chat input width */
+@media (max-width: 480px) {
+  .chat-bubble-streaming {
+    padding: 12px 16px;
+  }
+}
+
+/* Ensure smooth scrolling during streaming */
+.chat-scrollbar {
+  /* Smooth scrolling behavior */
+  scroll-behavior: smooth;
+  /* Enable momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent text selection during rapid streaming */
+.streaming-message .prose {
+  /* Disable text selection during streaming to prevent glitches */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Re-enable text selection when streaming is complete */
+.prose {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* Performance optimizations for chat scrolling */
+.chat-scrollbar {
+  /* Enable hardware acceleration for smooth scrolling */
+  transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize message rendering */
+.chat-message {
+  contain: layout style;
+  transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Generation metadata animations */
+@keyframes slide-in-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.slide-in-from-top-2 {
+  animation: slide-in-from-top 0.2s ease-out;
+}
+
+/* Enhanced hover effects for generation metadata */
+.generation-metadata-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.generation-metadata-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.dark .generation-metadata-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+}
+
+/* Additional overflow handling for edge cases */
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.375rem;
+}
+
+.markdown-content iframe,
+.markdown-content video,
+.markdown-content embed,
+.markdown-content object {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Handle horizontal rules */
+.markdown-content hr {
+  max-width: 100%;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 1.5rem 0;
+}
+
+/* Ensure headings don't overflow */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Handle definition lists */
+.markdown-content dl {
+  max-width: 100%;
+}
+
+.markdown-content dt,
+.markdown-content dd {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Ensure the chat message container itself prevents overflow */
+.chat-message {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Additional safety for very long content */
+.markdown-content * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Special handling for mathematical expressions or formulas */
+.markdown-content .math,
+.markdown-content .katex,
+.markdown-content .mathjax {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
 }
 
 .mask-gradient {
@@ -152,12 +1223,12 @@
 }
 
 .chat-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(54, 45, 61, 0.3);
+  background: rgba(var(--app-main-border), 0.3);
   border-radius: 4px;
 }
 
 .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(54, 45, 61, 0.5);
+  background: rgba(var(--app-main-border), 0.5);
 }
 
 /* Noise texture background */

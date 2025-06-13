@@ -65,7 +65,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
       }`}
     >
       <div className="w-full px-8 pt-[141.75px] transition-all duration-300">
-        <h2 className="text-3xl font-semibold leading-9 text-white">
+        <h2 className="text-3xl font-semibold leading-9 text-welcome-screen-title-text">
           How can I help you?
         </h2>
 
@@ -79,19 +79,19 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
               )}
               className={`flex items-center justify-center gap-2 h-9 backdrop-blur-xl border text-sm rounded-full shadow-sm transition-colors duration-150 px-5 py-2 whitespace-nowrap ${
                 selectedCategory === category.label
-                  ? "bg-selected border-transparent text-selected-foreground font-bold border-[#7f2d51] border-t-[0.5px] border-b-[0.5px] border-l-[1px] border-r-[1px] hover:bg-[rgba(123,28,68,0.8)]"
-                  : "bg-[rgba(54,45,61,0.3)] border-[rgba(54,45,61,0.7)] text-[rgba(212,199,225,0.9)] font-semibold hover:bg-[rgba(54,45,61,0.4)]"
+                  ? "bg-welcome-screen-button-selected-background border-welcome-screen-button-selected-border text-welcome-screen-button-selected-text font-bold hover:bg-welcome-screen-button-selected-hover-background"
+                  : "bg-welcome-screen-button-background border-welcome-screen-button-border text-welcome-screen-button-text font-semibold hover:bg-welcome-screen-button-hover-background"
               }`}
             >
               <category.icon className={`w-4 h-4 ${
                 selectedCategory === category.label
-                  ? "text-selected-foreground"
-                  : "text-[rgba(212,199,225,0.9)]"
+                  ? "text-welcome-screen-button-selected-text"
+                  : "text-welcome-screen-button-text"
               }`} />
               <div className={`text-sm font-semibold whitespace-nowrap ${
                 selectedCategory === category.label
-                  ? "text-selected-foreground"
-                  : "text-[rgba(212,199,225,0.9)]"
+                  ? "text-welcome-screen-button-selected-text"
+                  : "text-welcome-screen-button-text"
               }`}>
                 {category.label}
               </div>
@@ -105,14 +105,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             <div
               key={index}
               className={`flex items-start gap-2 py-1 ${
-                index > 0 ? "border-t border-[rgba(54,45,61,0.4)]" : ""
+                index > 0 ? "border-t border-welcome-screen-question-border" : ""
               }`}
             >
               <Button
                 onClick={() => onQuestionClick?.(question)}
-                className="w-full bg-transparent border-0 text-[rgb(212,199,225)] hover:bg-transparent px-3 py-2 text-left sm:px-3 rounded-md cursor-pointer justify-start items-start"
+                className="w-full bg-transparent border-0 text-welcome-screen-question-text hover:bg-transparent px-3 py-2 text-left sm:px-3 rounded-md cursor-pointer justify-start items-start"
               >
-                <span className="block text-[rgb(212,199,225)] text-left w-full">
+                <span className="block text-welcome-screen-question-text text-left w-full">
                   {question}
                 </span>
               </Button>
