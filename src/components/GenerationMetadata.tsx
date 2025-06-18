@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
 import { ChevronDown, ChevronRight, Clock, DollarSign, Zap, Server, Info } from 'lucide-react'
-import { 
-  useGenerationMetadata, 
-  formatCost, 
-  formatDuration, 
-  formatTokens, 
+import {
+  useGenerationMetadata,
+  formatCost,
+  formatDuration,
+  formatTokens,
   calculateTokensPerSecond,
   getModelDisplayName,
   getCacheDiscountPercentage
 } from '@/hooks/useGenerationMetadata'
 import type { Message } from '@/lib/supabase/database.types'
+import type { GenerationMetadata as GenerationMetadataType } from '@/lib/types'
 
 interface GenerationMetadataProps {
   message: Message
@@ -26,13 +27,13 @@ export const GenerationMetadata: React.FC<GenerationMetadataProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
-  const { 
-    data: metadata, 
-    isLoading, 
-    error 
+  const {
+    data: metadata,
+    isLoading,
+    error
   } = useGenerationMetadata(message.generation_id, {
     enabled: message.role === 'assistant' && !!message.generation_id
-  })
+  }) as { data: GenerationMetadataType | undefined, isLoading: boolean, error: any }
 
   // Don't render for user messages or messages without generation_id
   if (message.role !== 'assistant' || !message.generation_id) {
@@ -74,43 +75,37 @@ export const GenerationMetadata: React.FC<GenerationMetadataProps> = ({
   const modelDisplayName = getModelDisplayName(metadata.model)
 
   return (
-    <div className={`mt-3 rounded-xl generation-metadata-card ${
-      isExpanded
-        ? 'bg-gradient-to-br from-pink-50/5 to-purple-50/5 dark:from-pink-900/10 dark:to-purple-900/10'
-        : ''
-    } ${className}`}>
-      {/* Collapsible Header */}
+    <div className={`mt-3 rounded-xl generation-metadata-card ${className}`}>
+      {/* Collapsible Header - Aligned left next to buttons */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3 flex items-center justify-between text-xs rounded-xl transition-all duration-200 hover:bg-white/5 dark:hover:bg-white/5 group"
+        className="w-full px-3 py-2 flex items-center justify-start text-xs rounded-lg transition-all duration-200 hover:bg-white/5 dark:hover:bg-white/5 group"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 text-left">
+          <span className="font-medium text-[rgb(var(--chat-message-text))] text-xs">{modelDisplayName}</span>
+          <span className="text-[rgb(var(--chat-message-username))] opacity-60">•</span>
+          <span className="text-[rgb(var(--chat-message-username))] text-xs">{formatTokens(totalTokens)}</span>
+          <span className="text-[rgb(var(--chat-message-username))] opacity-60">•</span>
+          <span className="font-medium text-[rgb(var(--primary-button-gradient-from))] text-xs">{formatCost(metadata.total_cost)}</span>
+          <span className="text-[rgb(var(--chat-message-username))] opacity-60">•</span>
+          <span className="font-medium text-[rgb(var(--chat-message-username))] text-xs">{formatDuration(metadata.generation_time)}</span>
           {isExpanded ? (
-            <ChevronDown className="w-3.5 h-3.5 text-[rgb(var(--chat-message-username))] transition-transform duration-200" />
+            <ChevronDown className="w-3 h-3 text-[rgb(var(--chat-message-username))] transition-transform duration-200 ml-1" />
           ) : (
-            <ChevronRight className="w-3.5 h-3.5 text-[rgb(var(--chat-message-username))] transition-transform duration-200 group-hover:translate-x-0.5" />
+            <ChevronRight className="w-3 h-3 text-[rgb(var(--chat-message-username))] transition-transform duration-200 group-hover:translate-x-0.5 ml-1" />
           )}
-          <span className="font-semibold text-[rgb(var(--chat-message-text))]">{modelDisplayName}</span>
-          <span className="text-[rgb(var(--chat-message-username))] opacity-60">•</span>
-          <span className="text-[rgb(var(--chat-message-username))]">{formatTokens(totalTokens)} tokens</span>
-          <span className="text-[rgb(var(--chat-message-username))] opacity-60">•</span>
-          <span className="font-medium text-[rgb(var(--primary-button-gradient-from))]">{formatCost(metadata.total_cost)}</span>
-        </div>
-        <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))]">
-          <Clock className="w-3.5 h-3.5" />
-          <span className="font-medium">{formatDuration(metadata.generation_time)}</span>
         </div>
       </button>
 
       {/* Expanded Details */}
       {isExpanded && (
-        <div className="px-4 pb-4 space-y-4 text-xs animate-in slide-in-from-top-2 duration-200">
+        <div className="mt-2 p-4 rounded-lg bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 space-y-4 text-xs animate-in slide-in-from-top-2 duration-200">
           {/* Model and Provider Info */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-2">
-                <Server className="w-4 h-4" />
-                <span className="font-semibold">Model & Provider</span>
+              <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-3 pb-1 border-b border-white/10">
+                <Server className="w-3.5 h-3.5" />
+                <span className="font-medium text-xs">Model & Provider</span>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
@@ -131,9 +126,9 @@ export const GenerationMetadata: React.FC<GenerationMetadataProps> = ({
             </div>
 
             <div>
-              <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-2">
-                <DollarSign className="w-4 h-4" />
-                <span className="font-semibold">Cost & Usage</span>
+              <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-3 pb-1 border-b border-white/10">
+                <DollarSign className="w-3.5 h-3.5" />
+                <span className="font-medium text-xs">Cost & Usage</span>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
@@ -156,9 +151,9 @@ export const GenerationMetadata: React.FC<GenerationMetadataProps> = ({
 
           {/* Token Usage */}
           <div>
-            <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-3">
-              <Zap className="w-4 h-4" />
-              <span className="font-semibold">Token Usage</span>
+            <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-3 pb-1 border-b border-white/10">
+              <Zap className="w-3.5 h-3.5" />
+              <span className="font-medium text-xs">Token Usage</span>
             </div>
             <div className="grid grid-cols-3 gap-6">
               <div className="space-y-2">
@@ -200,9 +195,9 @@ export const GenerationMetadata: React.FC<GenerationMetadataProps> = ({
 
           {/* Performance Metrics */}
           <div>
-            <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-3">
-              <Clock className="w-4 h-4" />
-              <span className="font-semibold">Performance</span>
+            <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-3 pb-1 border-b border-white/10">
+              <Clock className="w-3.5 h-3.5" />
+              <span className="font-medium text-xs">Performance</span>
             </div>
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -233,7 +228,10 @@ export const GenerationMetadata: React.FC<GenerationMetadataProps> = ({
           {/* Additional Info */}
           {(metadata.num_media_prompt > 0 || metadata.num_search_results > 0) && (
             <div>
-              <div className="text-[rgb(var(--chat-message-username))] font-semibold mb-2">Additional</div>
+              <div className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] mb-3 pb-1 border-b border-white/10">
+                <Info className="w-3.5 h-3.5" />
+                <span className="font-medium text-xs">Additional</span>
+              </div>
               <div className="space-y-2">
                 {metadata.num_media_prompt > 0 && (
                   <div className="flex justify-between items-center">

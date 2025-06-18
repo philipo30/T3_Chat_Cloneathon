@@ -4,16 +4,31 @@ import React, { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { ApiKeyModal } from "@/components/ApiKeyModal";
+import { ShareModal } from "@/components/ShareModal";
 import { ContentRouter } from "@/components/ContentRouter";
 import { useApiKey } from "@/hooks/useApiKey";
+import { usePathname, useParams } from "next/navigation";
+import { useSupabaseChat } from "@/hooks/useSupabaseChats";
 
 export const AppLayout: React.FC = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isApiKeyModalOpen, setApiKeyModalOpen] = useState(false);
+  const [isShareModalOpen, setShareModalOpen] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(256); // Default width
   const { apiKey, saveApiKey } = useApiKey();
+  const pathname = usePathname();
+  const params = useParams();
+  
+  // Get current chat info for sharing
+  const currentChatId = pathname?.startsWith('/chat/') ? params?.chatId as string : null;
+  const { chat } = useSupabaseChat(currentChatId);
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
+  };
+
+  const handleSidebarWidthChange = (width: number) => {
+    setSidebarWidth(width);
   };
 
   const handleSaveApiKey = (key: string) => {
@@ -23,6 +38,10 @@ export const AppLayout: React.FC = () => {
 
   const handleApiKeyModalOpen = () => {
     setApiKeyModalOpen(true);
+  };
+
+  const handleShareModalOpen = () => {
+    setShareModalOpen(true);
   };
 
   return (
@@ -42,13 +61,18 @@ export const AppLayout: React.FC = () => {
       {/* Layout container */}
       <div className="flex min-h-screen w-full">
         {/* Sidebar */}
-        <Sidebar isVisible={isSidebarVisible} onToggle={toggleSidebar} />
+        <Sidebar
+          isVisible={isSidebarVisible}
+          onToggle={toggleSidebar}
+          onWidthChange={handleSidebarWidthChange}
+        />
 
         {/* Main content area */}
         <main
-          className={`flex-1 flex flex-col min-h-screen overflow-hidden relative transition-all duration-150 w-full ${
-            isSidebarVisible ? "ml-64" : "ml-0"
-          }`}
+          className="flex-1 flex flex-col min-h-screen overflow-hidden relative transition-all duration-200 ease-linear w-full"
+          style={{
+            marginLeft: isSidebarVisible ? `${sidebarWidth}px` : '0px'
+          }}
         >
           {/* Chat area background */}
           <div
@@ -66,7 +90,10 @@ export const AppLayout: React.FC = () => {
           </div>
 
           {/* Top bar */}
-          <TopBar isSidebarVisible={isSidebarVisible} />
+          <TopBar 
+            isSidebarVisible={isSidebarVisible} 
+            onShareClick={handleShareModalOpen}
+          />
 
           {/* Dynamic content area */}
           <ContentRouter onApiKeyModalOpen={handleApiKeyModalOpen} />
@@ -78,6 +105,15 @@ export const AppLayout: React.FC = () => {
         onClose={() => setApiKeyModalOpen(false)}
         onSave={handleSaveApiKey}
       />
+
+      {currentChatId && chat && (
+        <ShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+          chatId={currentChatId}
+          chatTitle={chat.title}
+        />
+      )}
 
       {/* Notifications and other elements */}
       <section

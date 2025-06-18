@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatMessage } from "@/components/ChatMessage";
@@ -9,6 +9,8 @@ import { useChatStore } from "@/lib/store/chatStore";
 import { useQuery } from "@tanstack/react-query";
 import { type Message } from "@/lib/supabase/database.types";
 import { type LegacyMessage } from "@/lib/types";
+import { useChatAutoScroll } from "@/hooks/useChatAutoScroll";
+import { ScrollToBottomButton } from "@/components/ScrollToBottomButton";
 
 interface HomeContentProps {
   onApiKeyModalOpen: () => void;
@@ -25,12 +27,16 @@ const transformLegacyMessage = (legacyMessage: LegacyMessage): Message => {
     created_at: legacyMessage.createdAt.toISOString(),
     is_complete: legacyMessage.isComplete ?? true,
     generation_id: legacyMessage.generationId ?? null,
+    reasoning: null, // Legacy messages don't have reasoning
+    annotations: null, // Legacy messages don't have annotations
+    attachments: null, // Legacy messages don't have attachments
   };
 };
 
 export const HomeContent: React.FC<HomeContentProps> = ({ onApiKeyModalOpen }) => {
   const [inputValue, setInputValue] = useState("");
   const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
 
   const { apiKey } = useApiKey();
 
@@ -55,6 +61,21 @@ export const HomeContent: React.FC<HomeContentProps> = ({ onApiKeyModalOpen }) =
 
   const modelName = models?.find((m: { id: string; name: string }) => m.id === modelId)?.name || modelId;
 
+  // Determine if AI is currently streaming
+  const isStreaming = useMemo(() => {
+    if (!messages.length) return false;
+    const lastMessage = messages[messages.length - 1];
+    return lastMessage?.role === 'assistant' && !lastMessage.isComplete;
+  }, [messages]);
+
+  // Auto-scroll hook for chat behavior
+  const { scrollRef, showScrollButton, scrollToBottom, onMessageSent } = useChatAutoScroll({
+    messages,
+    isStreaming,
+    isLoading: false, // HomeContent doesn't have loading state
+    enabled: true
+  });
+
   // Hide welcome screen if we have messages
   useEffect(() => {
     if (messages.length > 0) {
@@ -64,11 +85,22 @@ export const HomeContent: React.FC<HomeContentProps> = ({ onApiKeyModalOpen }) =
 
   const handleInputChange = (value: string) => {
     setInputValue(value);
-    // Hide welcome screen when user starts typing
+
+    // Enhanced typing detection with smooth transitions
     if (value.trim().length > 0) {
-      setIsWelcomeVisible(false);
+      if (!isTyping) {
+        setIsTyping(true);
+        // Small delay before hiding welcome screen for smoother UX
+        setTimeout(() => {
+          setIsWelcomeVisible(false);
+        }, 150);
+      }
     } else if (messages.length === 0) {
-      setIsWelcomeVisible(true);
+      setIsTyping(false);
+      // Slight delay before showing welcome screen again
+      setTimeout(() => {
+        setIsWelcomeVisible(true);
+      }, 100);
     }
   };
 
@@ -92,7 +124,10 @@ export const HomeContent: React.FC<HomeContentProps> = ({ onApiKeyModalOpen }) =
         {/* Smooth gradient shadow overlay at top edge - matches chat input width */}
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-full max-w-3xl h-12 chat-content-fade-overlay" />
 
-        <div className="absolute inset-0 overflow-auto chat-scrollbar pb-36 pt-3.5 scrollbar-gutter-stable-both-edges w-full">
+        <div
+          ref={scrollRef}
+          className="absolute inset-0 overflow-auto chat-scrollbar pb-36 pt-3.5 scrollbar-gutter-stable-both-edges w-full"
+        >
           {/* Chat messages container */}
           <div
             role="log"
@@ -117,12 +152,19 @@ export const HomeContent: React.FC<HomeContentProps> = ({ onApiKeyModalOpen }) =
         </div>
       </div>
 
+      {/* Scroll to bottom button */}
+      <ScrollToBottomButton
+        visible={showScrollButton}
+        onClick={scrollToBottom}
+      />
+
       {/* Chat input */}
       <ChatInput
         value={inputValue}
         onInputChange={handleInputChange}
         onSubmit={handleSubmit}
         apiKey={apiKey}
+        onMessageSent={onMessageSent}
       />
     </>
   );

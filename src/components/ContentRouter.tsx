@@ -31,10 +31,10 @@ export const ContentRouter: React.FC<ContentRouterProps> = ({ onApiKeyModalOpen 
   // Determine which content to render based on current route
   const renderContent = () => {
     // Chat page route
-    if (currentRoute.startsWith('/chat/') && params.chatId) {
+    if (currentRoute?.startsWith('/chat/') && params?.chatId) {
       return (
-        <ChatContent 
-          chatId={params.chatId as string} 
+        <ChatContent
+          chatId={params.chatId as string}
           onApiKeyModalOpen={onApiKeyModalOpen}
         />
       );

@@ -21,15 +21,27 @@ export function useSupabaseChat(chatId: string | null) {
     refetchOnReconnect: true,
   })
 
-  // Real-time subscription for chat updates
+  // Real-time subscription for chat updates (throttled to prevent conflicts with streaming)
   useEffect(() => {
     if (!chatId) return
 
+    let timeoutId: NodeJS.Timeout
+
     const subscription = chatService.subscribeToChatUpdates(chatId, (payload) => {
-      queryClient.invalidateQueries({ queryKey: ['chat', chatId] })
+      // Throttle invalidations to prevent conflicts with optimistic streaming updates
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        // Use refetchQueries instead of invalidateQueries to avoid clearing cache
+        // This prevents messages from disappearing during streaming completion
+        queryClient.refetchQueries({
+          queryKey: ['chat', chatId],
+          type: 'active' // Only refetch if query is currently being observed
+        })
+      }, 300) // Shorter delay than user-chats since individual chats need faster updates
     })
 
     return () => {
+      clearTimeout(timeoutId)
       subscription.unsubscribe()
     }
   }, [chatId, queryClient])
@@ -95,6 +107,29 @@ export function useSupabaseChats() {
     },
   })
 
+  // Create new chat with context mutation
+  const createChatInContextMutation = useMutation({
+    mutationFn: (data: {
+      title: string;
+      modelId: string;
+      workspaceId?: string;
+      folderId?: string
+    }) => chatService.createChatInContext(data.title, data.modelId, data.workspaceId, data.folderId),
+    onSuccess: (newChat) => {
+      // Optimistically update the cache with the new chat at the top
+      queryClient.setQueryData(['user-chats', currentUser?.id], (old: Chat[] = []) => [
+        newChat,
+        ...old,
+      ])
+      // Also invalidate to ensure we have the latest data
+      queryClient.invalidateQueries({ queryKey: ['user-chats', currentUser?.id] })
+      // Also invalidate workspace data if the chat was created in a specific workspace
+      if (newChat.workspace_id) {
+        queryClient.invalidateQueries({ queryKey: ['workspace-with-folders', newChat.workspace_id] })
+      }
+    },
+  })
+
   // Update chat mutation
   const updateChatMutation = useMutation({
     mutationFn: ({ chatId, updates }: { chatId: string; updates: any }) =>
@@ -118,15 +153,48 @@ export function useSupabaseChats() {
     },
   })
 
+  // Pin chat mutation
+  const pinChatMutation = useMutation({
+    mutationFn: (chatId: string) => chatService.pinChat(chatId),
+    onSuccess: (updatedChat) => {
+      queryClient.setQueryData(['user-chats', currentUser?.id], (old: Chat[] = []) =>
+        old.map((chat) => (chat.id === updatedChat.id ? updatedChat : chat))
+      )
+      queryClient.invalidateQueries({ queryKey: ['chat', updatedChat.id] })
+      // Invalidate workspace data to refresh the sidebar organization
+      queryClient.invalidateQueries({ queryKey: ['workspace-with-folders', updatedChat.workspace_id] })
+    },
+  })
+
+  // Unpin chat mutation
+  const unpinChatMutation = useMutation({
+    mutationFn: (chatId: string) => chatService.unpinChat(chatId),
+    onSuccess: (updatedChat) => {
+      queryClient.setQueryData(['user-chats', currentUser?.id], (old: Chat[] = []) =>
+        old.map((chat) => (chat.id === updatedChat.id ? updatedChat : chat))
+      )
+      queryClient.invalidateQueries({ queryKey: ['chat', updatedChat.id] })
+      // Invalidate workspace data to refresh the sidebar organization
+      queryClient.invalidateQueries({ queryKey: ['workspace-with-folders', updatedChat.workspace_id] })
+    },
+  })
+
   // Add message mutation
   const addMessageMutation = useMutation({
     mutationFn: (data: MessageInsert) => chatService.addMessage(data),
     onSuccess: (newMessage) => {
-      // Update the specific chat query
+      // Update the specific chat query with deduplication
       queryClient.setQueryData(
         ['chat', newMessage.chat_id],
         (old: ChatWithMessages | undefined) => {
           if (!old) return old
+
+          // Check if message already exists to prevent duplicates
+          const messageExists = old.messages.some(msg => msg.id === newMessage.id)
+          if (messageExists) {
+            return old // Don't add duplicate
+          }
+
           return {
             ...old,
             messages: [...old.messages, newMessage],
@@ -176,6 +244,13 @@ export function useSupabaseChats() {
     [createChatMutation]
   )
 
+  const createChatInContext = useCallback(
+    (title: string, modelId: string, workspaceId?: string, folderId?: string) => {
+      return createChatInContextMutation.mutateAsync({ title, modelId, workspaceId, folderId })
+    },
+    [createChatInContextMutation]
+  )
+
   const updateChat = useCallback(
     (chatId: string, updates: any) => {
       return updateChatMutation.mutateAsync({ chatId, updates })
@@ -204,6 +279,45 @@ export function useSupabaseChats() {
     [updateMessageMutation]
   )
 
+  const pinChat = useCallback(
+    (chatId: string) => {
+      return pinChatMutation.mutateAsync(chatId)
+    },
+    [pinChatMutation]
+  )
+
+  const unpinChat = useCallback(
+    (chatId: string) => {
+      return unpinChatMutation.mutateAsync(chatId)
+    },
+    [unpinChatMutation]
+  )
+
+  const deleteMessage = useCallback(
+    async (messageId: string, chatId: string) => {
+      await chatService.deleteMessage(messageId)
+      // Invalidate the chat query to refresh the UI
+      queryClient.invalidateQueries({ queryKey: ['chat', chatId] })
+    },
+    [queryClient]
+  )
+
+  const deleteMessagesAfter = useCallback(
+    async (messageId: string, chatId: string) => {
+      await chatService.deleteMessagesAfter(messageId, chatId)
+      // Invalidate the chat query to refresh the UI
+      queryClient.invalidateQueries({ queryKey: ['chat', chatId] })
+    },
+    [queryClient]
+  )
+
+  const getLastUserMessage = useCallback(
+    (chatId: string) => {
+      return chatService.getLastUserMessage(chatId)
+    },
+    []
+  )
+
   // Handle loading state
   if (loading) {
     return {
@@ -211,15 +325,23 @@ export function useSupabaseChats() {
       isLoadingChats: true,
       chatsError: null,
       createChat: async () => { throw new Error('Auth loading') },
+      createChatInContext: async () => { throw new Error('Auth loading') },
       updateChat: async () => { throw new Error('Auth loading') },
       deleteChat: async () => { throw new Error('Auth loading') },
       addMessage: async () => { throw new Error('Auth loading') },
       updateMessage: async () => { throw new Error('Auth loading') },
+      pinChat: async () => { throw new Error('Auth loading') },
+      unpinChat: async () => { throw new Error('Auth loading') },
+      deleteMessage: async () => { throw new Error('Auth loading') },
+      deleteMessagesAfter: async () => { throw new Error('Auth loading') },
+      getLastUserMessage: async () => { throw new Error('Auth loading') },
       isCreatingChat: false,
       isUpdatingChat: false,
       isDeletingChat: false,
       isAddingMessage: false,
       isUpdatingMessage: false,
+      isPinningChat: false,
+      isUnpinningChat: false,
     }
   }
 
@@ -228,14 +350,22 @@ export function useSupabaseChats() {
     isLoadingChats,
     chatsError,
     createChat,
+    createChatInContext,
     updateChat,
     deleteChat,
     addMessage,
     updateMessage,
-    isCreatingChat: createChatMutation.isPending,
+    pinChat,
+    unpinChat,
+    deleteMessage,
+    deleteMessagesAfter,
+    getLastUserMessage,
+    isCreatingChat: createChatMutation.isPending || createChatInContextMutation.isPending,
     isUpdatingChat: updateChatMutation.isPending,
     isDeletingChat: deleteChatMutation.isPending,
     isAddingMessage: addMessageMutation.isPending,
     isUpdatingMessage: updateMessageMutation.isPending,
+    isPinningChat: pinChatMutation.isPending,
+    isUnpinningChat: unpinChatMutation.isPending,
   }
 }

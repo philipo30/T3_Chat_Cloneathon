@@ -98,6 +98,11 @@
     --sidebar-component-search-placeholder: 117, 98, 118;
     --sidebar-component-user-info-text: 59, 28, 62;
     --sidebar-loader-background: 0, 0, 0;
+    --sidebar-pinned-border: 191, 75, 133; /* Primary pink for pinned chat border */
+    --sidebar-pinned-background: 191, 75, 133; /* Primary pink for pinned chat background */
+    --sidebar-pinned-icon: 191, 75, 133; /* Primary pink for pinned icon */
+    --sidebar-delete-icon: 220, 38, 38; /* Red for delete icon */
+    --sidebar-chevron-icon: 117, 98, 118; /* Muted purple for chevron */
 
     /* Logout Button */
     --logout-button-text: 82, 60, 84;
@@ -138,36 +143,71 @@
     --chat-bubble-ai-bg: 248, 242, 250; /* Light pink background */
     --chat-bubble-ai-text: 82, 60, 84; /* Dark purple text */
     --chat-bubble-ai-border: 233, 224, 236; /* Light pink border */
+
+    /* reasoning display */
+    --reasoning-header-text: 117, 98, 118; /* Muted purple text */
+    --reasoning-header-icon: 191, 75, 133; /* Primary pink for brain icon */
+    --reasoning-content-bg: 252, 248, 253; /* Very light pink background */
+    --reasoning-content-border: 233, 224, 236; /* Light pink border */
+    --reasoning-content-shadow: 191, 75, 133; /* Pink shadow */
+    --reasoning-header-bg: 248, 242, 250; /* Light pink header background */
+    --reasoning-header-border: 239, 224, 236; /* Header border */
+    --reasoning-text: 82, 60, 84; /* Dark purple text */
+    --reasoning-code-bg: 245, 238, 248; /* Light purple code background */
+    --reasoning-blockquote-border: 191, 75, 133; /* Pink blockquote border */
+
+    /* web search annotations */
+    --websearch-header-text: 117, 98, 118; /* Muted purple text */
+    --websearch-header-icon: 191, 75, 133; /* Primary pink for globe icon */
+    --websearch-content-bg: 252, 248, 253; /* Very light pink background */
+    --websearch-content-border: 233, 224, 236; /* Light pink border */
+    --websearch-content-shadow: 191, 75, 133; /* Pink shadow */
+    --websearch-header-bg: 248, 242, 250; /* Light pink header background */
+    --websearch-header-border: 239, 224, 236; /* Header border */
+    --websearch-text: 82, 60, 84; /* Dark purple text */
+    --websearch-link-color: 191, 75, 133; /* Pink for links */
+    --websearch-link-hover: 169, 58, 114; /* Darker pink for link hover */
+
+    /* file upload - light mode */
+    --file-upload-border: 233, 224, 236; /* Light purple border */
+    --file-upload-border-hover: 191, 75, 133; /* Pink border on hover */
+    --file-upload-background: 248, 242, 250; /* Light purple background */
+    --file-upload-background-hover: 245, 238, 248; /* Slightly darker on hover */
+    --file-upload-text: 82, 60, 84; /* Dark purple text */
+    --file-upload-icon: 117, 98, 118; /* Muted icon color */
+    --file-upload-error-bg: 254, 242, 242; /* Light red background */
+    --file-upload-error-border: 252, 165, 165; /* Light red border */
+    --file-upload-error-text: 185, 28, 28; /* Dark red text */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 19, 19, 20; /* From --app-page-background */
+    --foreground: 231, 208, 221; /* From --login-form-title-text, general light text */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 31, 26, 36; /* From --app-main-background or --login-form-background */
+    --card-foreground: 231, 208, 221;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 31, 26, 36;
+    --popover-foreground: 231, 208, 221;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 92, 45, 71; /* Darker pink/magenta from --primary-button-gradient-from */
+    --primary-foreground: 255, 255, 255; /* White text for primary elements */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 54, 45, 61; /* From --chat-bubble-ai-bg */
+    --secondary-foreground: 212, 199, 225; /* From --chat-bubble-ai-text */
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 54, 45, 61; /* Similar to secondary background */
+    --muted-foreground: 212, 199, 225; /* Similar to secondary foreground */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 26, 20, 25; /* From --sidebar-component-hidden-background, for sidebar/accented areas */
+    --accent-foreground: 231, 208, 221; /* Similar to foreground */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 251, 113, 133; /* From --login-form-error-text (red-600 equivalent) */
+    --destructive-foreground: 255, 255, 255; /* White text for destructive elements */
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 50, 32, 40; /* From --app-main-border */
+    --input: 54, 45, 61; /* From --chat-input-form-background */
+    --ring: 126, 60, 95; /* From --primary-button-border (pink/magenta for focus ring) */
 
     /* App Page */
     --app-page-background: 19, 19, 20;
@@ -215,13 +255,18 @@
     --sidebar-component-hidden-background: 26, 20, 25;
     --sidebar-component-button-text: 231, 208, 221;
     --sidebar-component-button-hover-text: 255, 255, 255;
-    --sidebar-component-button-hover-background: 107, 114, 128;
+    --sidebar-component-button-hover-background: 54, 45, 61; /* Dark purple instead of gray */
     --sidebar-component-title-text: 231, 208, 221;
     --sidebar-component-search-border: 50, 32, 40;
     --sidebar-component-search-icon-text: 231, 208, 221;
     --sidebar-component-search-placeholder: 231, 208, 221;
     --sidebar-component-user-info-text: 231, 208, 221;
     --sidebar-loader-background: 255, 255, 255;
+    --sidebar-pinned-border: 191, 75, 133; /* Primary pink for pinned chat border */
+    --sidebar-pinned-background: 191, 75, 133; /* Primary pink for pinned chat background */
+    --sidebar-pinned-icon: 191, 75, 133; /* Primary pink for pinned icon */
+    --sidebar-delete-icon: 251, 113, 133; /* Lighter red for delete icon in dark mode */
+    --sidebar-chevron-icon: 176, 179, 184; /* Light muted for chevron in dark mode */
 
     /* Logout Button */
     --logout-button-text: 212, 199, 225;
@@ -261,6 +306,104 @@
     --chat-bubble-ai-bg: 54, 45, 61; /* Dark purple background */
     --chat-bubble-ai-text: 212, 199, 225; /* Light purple text */
     --chat-bubble-ai-border: 82, 60, 84; /* Medium purple border */
+
+    /* reasoning display - dark mode */
+    --reasoning-header-text: 176, 179, 184; /* Light muted text */
+    --reasoning-header-icon: 191, 75, 133; /* Primary pink for brain icon */
+    --reasoning-content-bg: 44, 35, 51; /* Dark purple background */
+    --reasoning-content-border: 82, 60, 84; /* Medium purple border */
+    --reasoning-content-shadow: 191, 75, 133; /* Pink shadow */
+    --reasoning-header-bg: 54, 45, 61; /* Dark purple header background */
+    --reasoning-header-border: 82, 60, 84; /* Header border */
+    --reasoning-text: 212, 199, 225; /* Light purple text */
+    --reasoning-code-bg: 64, 55, 71; /* Dark purple code background */
+    --reasoning-blockquote-border: 191, 75, 133; /* Pink blockquote border */
+
+    /* web search annotations - dark mode */
+    --websearch-header-text: 176, 179, 184; /* Light muted text */
+    --websearch-header-icon: 191, 75, 133; /* Primary pink for globe icon */
+    --websearch-content-bg: 44, 35, 51; /* Dark purple background */
+    --websearch-content-border: 82, 60, 84; /* Medium purple border */
+    --websearch-content-shadow: 191, 75, 133; /* Pink shadow */
+    --websearch-header-bg: 54, 45, 61; /* Dark purple header background */
+    --websearch-header-border: 82, 60, 84; /* Header border */
+    --websearch-text: 212, 199, 225; /* Light purple text */
+    --websearch-link-color: 191, 75, 133; /* Pink for links */
+    --websearch-link-hover: 201, 85, 143; /* Lighter pink for link hover in dark mode */
+
+    /* file upload - dark mode */
+    --file-upload-border: 82, 60, 84; /* Medium purple border */
+    --file-upload-border-hover: 191, 75, 133; /* Pink border on hover */
+    --file-upload-background: 54, 45, 61; /* Dark purple background */
+    --file-upload-background-hover: 64, 55, 71; /* Lighter purple on hover */
+    --file-upload-text: 212, 199, 225; /* Light purple text */
+    --file-upload-icon: 176, 179, 184; /* Muted icon color */
+    --file-upload-error-bg: 127, 29, 29; /* Dark red background */
+    --file-upload-error-border: 185, 28, 28; /* Red border */
+    --file-upload-error-text: 248, 113, 113; /* Light red text */
+  }
+
+  /* Web Search Annotations Animations */
+  @keyframes websearch-slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+      max-height: 0;
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      max-height: 600px;
+    }
+  }
+
+  @keyframes websearch-slide-up {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      max-height: 600px;
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+      max-height: 0;
+    }
+  }
+
+  .websearch-content-enter {
+    animation: websearch-slide-down 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .websearch-content-exit {
+    animation: websearch-slide-up 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* Enhanced web search result item animations */
+  .websearch-result-item {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .websearch-result-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--websearch-content-shadow), 0.1);
+  }
+
+  /* Custom scrollbar for web search annotations */
+  .websearch-scrollable::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .websearch-scrollable::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .websearch-scrollable::-webkit-scrollbar-thumb {
+    background: rgba(var(--websearch-content-border), 0.4);
+    border-radius: 3px;
+  }
+
+  .websearch-scrollable::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--websearch-content-border), 0.6);
   }
 
   html {
@@ -342,6 +485,12 @@
     background: rgb(var(--secondary) / 0.3);
     border-radius: 8px;
     border: 1px solid rgb(var(--border) / 0.3);
+  }
+
+  /* Shiki code highlighter styling - compact spacing */
+  .shiki {
+    margin: 0 !important;
+    padding: 0.5rem !important;
   }
 
   /* macOS-style window controls animations */
@@ -514,8 +663,7 @@
 
 /* Enhanced Code Block Styling */
 .code-block-wrapper {
-  margin: 1rem 0;
-  border-radius: 0.5rem;
+  margin: 0.125rem 0;
   background: rgb(var(--chat-code-block-bg));
   border: 1px solid rgba(var(--chat-message-username), 0.2);
   overflow: hidden;
@@ -590,7 +738,7 @@
   white-space: pre;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-  margin: 1rem 0;
+  margin: 0.125rem 0;
 }
 
 .markdown-content pre::-webkit-scrollbar {
@@ -1110,12 +1258,31 @@
   }
 }
 
+@keyframes slide-out-to-top {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
 .animate-in {
+  animation-fill-mode: both;
+}
+
+.animate-out {
   animation-fill-mode: both;
 }
 
 .slide-in-from-top-2 {
   animation: slide-in-from-top 0.2s ease-out;
+}
+
+.slide-out-to-top-2 {
+  animation: slide-out-to-top 0.2s ease-in;
 }
 
 /* Enhanced hover effects for generation metadata */
@@ -1235,6 +1402,655 @@
 .noise-bg {
   background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJub2lzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMikiLz4KPHJLQ3Qgd2lkdGg9IjEiIGhlaWdodD0iMSIgeD0iMSIgeT0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAxKSIvPgo8L3BhdHRlcm4+CjwvZGVmcz4KPHJLQ3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNub2lzZSkiLz4KPC9zdmc+");
   background-size: 96px 96px;
+}
+
+/* Reasoning Display Animations and Styling */
+@keyframes reasoning-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 600px;
+  }
+}
+
+@keyframes reasoning-slide-up {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 600px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    max-height: 0;
+  }
+}
+
+@keyframes reasoning-backdrop-fade-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+@keyframes reasoning-backdrop-fade-out {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+@keyframes reasoning-button-expand {
+  from {
+    width: auto;
+    padding: 0.25rem 0.5rem;
+  }
+  to {
+    width: auto;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+.reasoning-content-enter {
+  animation: reasoning-slide-down 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.reasoning-content-exit {
+  animation: reasoning-slide-up 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.reasoning-backdrop-enter {
+  animation: reasoning-backdrop-fade-in 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.reasoning-backdrop-exit {
+  animation: reasoning-backdrop-fade-out 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Reasoning backdrop overlay */
+.reasoning-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+  z-index: 40;
+  pointer-events: none;
+}
+
+/* Compact reasoning toggle button - text always visible */
+.reasoning-toggle-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.5rem;
+  background: rgba(var(--reasoning-content-bg), 0.6);
+  border: 1px solid rgba(var(--reasoning-content-border), 0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  font-size: 0.75rem;
+}
+
+.reasoning-toggle-compact:hover {
+  background: rgba(var(--reasoning-content-bg), 0.9);
+  border-color: rgba(var(--reasoning-header-icon), 0.3);
+  box-shadow: 0 2px 8px rgba(var(--reasoning-content-shadow), 0.1);
+  transform: translateY(-1px);
+}
+
+/* Reasoning window with shadow gradients */
+.reasoning-window {
+  position: relative;
+  background: rgb(var(--reasoning-content-bg));
+  border: 1px solid rgb(var(--reasoning-content-border));
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 8px 32px rgba(var(--reasoning-content-shadow), 0.12),
+    0 4px 16px rgba(var(--reasoning-content-shadow), 0.08),
+    0 2px 8px rgba(var(--reasoning-content-shadow), 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
+  max-height: 600px;
+}
+
+.reasoning-window:hover {
+  box-shadow:
+    0 12px 40px rgba(var(--reasoning-content-shadow), 0.16),
+    0 6px 20px rgba(var(--reasoning-content-shadow), 0.12),
+    0 3px 10px rgba(var(--reasoning-content-shadow), 0.08);
+}
+
+/* Smooth expansion animation */
+.reasoning-window:not(.reasoning-preview-state):hover {
+  transform: translateY(-2px);
+}
+
+/* Enhanced content layout with better spacing */
+.reasoning-content-container {
+  position: relative;
+  max-height: 500px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.reasoning-content-container::before {
+  content: '';
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--reasoning-content-bg)) 0%,
+    rgba(var(--reasoning-content-bg), 0.95) 40%,
+    rgba(var(--reasoning-content-bg), 0.7) 70%,
+    transparent 100%
+  );
+  z-index: 10;
+  pointer-events: none;
+}
+
+.reasoning-content-container::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(
+    to top,
+    rgb(var(--reasoning-content-bg)) 0%,
+    rgba(var(--reasoning-content-bg), 0.95) 40%,
+    rgba(var(--reasoning-content-bg), 0.7) 70%,
+    transparent 100%
+  );
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Improved content spacing and typography */
+.reasoning-content-inner {
+  padding: 1rem 1.5rem;
+  line-height: 1.7;
+  font-size: 0.875rem;
+}
+
+.reasoning-content-inner > * + * {
+  margin-top: 1rem;
+}
+
+.reasoning-content-inner h1,
+.reasoning-content-inner h2,
+.reasoning-content-inner h3,
+.reasoning-content-inner h4,
+.reasoning-content-inner h5,
+.reasoning-content-inner h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.reasoning-content-inner p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.reasoning-content-inner ul,
+.reasoning-content-inner ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.reasoning-content-inner li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.reasoning-content-inner blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  background: rgba(var(--reasoning-content-border), 0.1);
+}
+
+.reasoning-content-inner pre {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.reasoning-content-inner code:not(pre code) {
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+/* Reasoning Preview State (Collapsed) */
+.reasoning-preview-state {
+  max-height: 80px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.reasoning-preview-state:hover {
+  box-shadow:
+    0 4px 16px rgba(var(--reasoning-content-shadow), 0.12),
+    0 2px 8px rgba(var(--reasoning-content-shadow), 0.08);
+  transform: translateY(-1px);
+  border-color: rgba(var(--reasoning-header-icon), 0.2);
+}
+
+.reasoning-preview-container {
+  position: relative;
+  height: 80px;
+  overflow: hidden;
+}
+
+.reasoning-preview-content {
+  padding: 0.75rem 1rem;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Fade shadows for preview */
+.reasoning-preview-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--reasoning-content-bg)) 0%,
+    rgba(var(--reasoning-content-bg), 0.8) 60%,
+    transparent 100%
+  );
+  z-index: 10;
+  pointer-events: none;
+}
+
+.reasoning-preview-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: linear-gradient(
+    to top,
+    rgb(var(--reasoning-content-bg)) 0%,
+    rgba(var(--reasoning-content-bg), 0.9) 40%,
+    rgba(var(--reasoning-content-bg), 0.6) 70%,
+    transparent 100%
+  );
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Preview markdown styling */
+.reasoning-preview-markdown {
+  color: rgb(var(--reasoning-text));
+  font-size: 0.75rem;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.reasoning-preview-markdown p {
+  margin: 0;
+  color: rgb(var(--reasoning-text));
+  line-height: 1.5;
+}
+
+.reasoning-preview-markdown h1,
+.reasoning-preview-markdown h2,
+.reasoning-preview-markdown h3,
+.reasoning-preview-markdown h4,
+.reasoning-preview-markdown h5,
+.reasoning-preview-markdown h6 {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: rgb(var(--reasoning-text));
+  line-height: 1.3;
+}
+
+.reasoning-preview-markdown code {
+  background-color: rgba(var(--reasoning-code-bg), 0.6);
+  color: rgb(var(--reasoning-text));
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.6875rem;
+}
+
+.reasoning-preview-markdown ul,
+.reasoning-preview-markdown ol {
+  margin: 0.25rem 0;
+  padding-left: 1rem;
+}
+
+.reasoning-preview-markdown li {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Enhanced reasoning markdown styling */
+.reasoning-markdown {
+  color: rgb(var(--reasoning-text));
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.reasoning-markdown h1,
+.reasoning-markdown h2,
+.reasoning-markdown h3,
+.reasoning-markdown h4,
+.reasoning-markdown h5,
+.reasoning-markdown h6 {
+  color: rgb(var(--reasoning-text));
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.reasoning-markdown h1 {
+  font-size: 1.25rem;
+}
+
+.reasoning-markdown h2 {
+  font-size: 1.125rem;
+}
+
+.reasoning-markdown h3 {
+  font-size: 1rem;
+}
+
+.reasoning-markdown p {
+  color: rgb(var(--reasoning-text));
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.reasoning-markdown code {
+  background-color: rgb(var(--reasoning-code-bg));
+  color: rgb(var(--reasoning-text));
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.reasoning-markdown pre {
+  background-color: rgb(var(--reasoning-code-bg));
+  border: 1px solid rgb(var(--reasoning-content-border));
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.reasoning-markdown blockquote {
+  border-left: 3px solid rgb(var(--reasoning-blockquote-border));
+  background: rgba(var(--reasoning-content-border), 0.1);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  color: rgb(var(--reasoning-text));
+  font-style: italic;
+}
+
+.reasoning-markdown ul,
+.reasoning-markdown ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.reasoning-markdown li {
+  color: rgb(var(--reasoning-text));
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.reasoning-markdown strong {
+  color: rgb(var(--reasoning-text));
+  font-weight: 600;
+}
+
+.reasoning-markdown em {
+  color: rgb(var(--reasoning-text));
+  font-style: italic;
+}
+
+/* Enhanced Reasoning Controls Dropdown */
+.reasoning-dropdown-content {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: reasoning-dropdown-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes reasoning-dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Enhanced dropdown separators */
+.reasoning-dropdown-content [data-radix-dropdown-menu-separator] {
+  background: rgba(var(--reasoning-header-border), 0.3);
+  margin: 0.5rem 0;
+}
+
+/* Enhanced checkbox items */
+.reasoning-dropdown-content [data-radix-dropdown-menu-checkbox-item] {
+  border-radius: 8px;
+  margin: 0.25rem 0.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reasoning-dropdown-content [data-radix-dropdown-menu-checkbox-item]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(var(--reasoning-content-shadow), 0.1);
+}
+
+/* Enhanced menu items */
+.reasoning-dropdown-content [data-radix-dropdown-menu-item] {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reasoning-dropdown-content [data-radix-dropdown-menu-item]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(var(--reasoning-content-shadow), 0.08);
+}
+
+/* Custom scrollbar for reasoning content */
+.reasoning-content-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reasoning-content-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.reasoning-content-container::-webkit-scrollbar-thumb {
+  background: rgba(var(--reasoning-content-border), 0.4);
+  border-radius: 3px;
+}
+
+.reasoning-content-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--reasoning-content-border), 0.6);
+}
+
+/* Sidebar Category Animations */
+@keyframes sidebar-category-expand {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    max-height: 1000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sidebar-category-collapse {
+  from {
+    max-height: 1000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.sidebar-category-expanding {
+  animation: sidebar-category-expand 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.sidebar-category-collapsing {
+  animation: sidebar-category-collapse 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Enhanced Sidebar Pinned Chat Styling */
+.sidebar-pinned-chat {
+  border-left: 2px solid rgb(var(--sidebar-pinned-border));
+  background: rgba(var(--sidebar-pinned-background), 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-pinned-chat:hover {
+  background: rgba(var(--sidebar-pinned-background), 0.1);
+  border-left-color: rgb(var(--sidebar-pinned-border));
+}
+
+/* Pinned Icon Styling */
+.sidebar-pinned-icon {
+  color: rgb(var(--sidebar-pinned-icon)) !important;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Pin Button Styling */
+.sidebar-pin-button {
+  transition: all 0.2s ease-in-out;
+  color: rgb(var(--sidebar-component-button-text));
+}
+
+.sidebar-pin-button:hover {
+  background: rgba(var(--sidebar-pinned-background), 0.2) !important;
+  color: rgb(var(--sidebar-pinned-icon)) !important;
+}
+
+/* Delete Button Styling */
+.sidebar-delete-button {
+  transition: all 0.2s ease-in-out;
+  color: rgb(var(--sidebar-delete-icon));
+}
+
+.sidebar-delete-button:hover {
+  background: rgba(var(--sidebar-delete-icon), 0.2) !important;
+  color: rgb(var(--sidebar-delete-icon)) !important;
+}
+
+/* Category Header Styling */
+.sidebar-category-header {
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-category-header:hover {
+  background: rgba(var(--sidebar-component-button-hover-background), 0.5);
+}
+
+/* Chevron Animation and Styling */
+.sidebar-chevron {
+  transition: transform 0.2s ease-in-out;
+  color: rgb(var(--sidebar-chevron-icon));
+}
+
+.sidebar-chevron.collapsed {
+  transform: rotate(-90deg);
+}
+
+/* Chevron Button Styling */
+.sidebar-chevron-button {
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-chevron-button:hover {
+  background: rgba(var(--sidebar-component-button-hover-background), 0.8) !important;
+}
+
+.sidebar-chevron-button:hover .sidebar-chevron {
+  color: rgb(var(--sidebar-component-button-hover-text)) !important;
+}
+
+/* Sidebar Resize Handle Styling */
+.sidebar-resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 10;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.sidebar-resize-handle:hover {
+  background-color: rgba(var(--sidebar-border), 0.2);
+}
+
+.sidebar-resize-handle:active {
+  background-color: rgba(var(--sidebar-border), 0.4);
+}
+
+/* Prevent text selection during resize */
+.sidebar-resizing {
+  user-select: none;
+  cursor: col-resize !important;
+}
+
+.sidebar-resizing * {
+  cursor: col-resize !important;
 }
 
 ::selection {

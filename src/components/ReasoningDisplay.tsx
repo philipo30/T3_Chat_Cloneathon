@@ -1,14 +1,48 @@
-import React, { memo, useState } from 'react';
-import { ChevronDown, ChevronUp, Brain } from 'lucide-react';
+import React, { memo, useState, useEffect } from 'react';
+import { ChevronDown, ChevronUp, Brain, Sparkles } from 'lucide-react';
 import { MarkdownRenderer } from './MarkdownRenderer';
-import { useReasoningSettings } from '@/stores/ReasoningStore';
+import { getReasoningModelInfoFromAPI } from '@/lib/reasoning-models';
+import type { OpenRouterModel } from '@/lib/types';
 
 interface ReasoningDisplayProps {
   reasoning: string;
   messageId: string;
   className?: string;
   isComplete?: boolean;
+  model?: OpenRouterModel | null; // Add model prop for context-aware detection
 }
+
+/**
+ * Extract the last part of reasoning text for preview
+ * Shows the conclusion/end of the reasoning
+ */
+const getLastPartOfReasoning = (text: string): string => {
+  if (!text) return '';
+
+  // If text is short enough, show it all
+  if (text.length <= 400) return text;
+
+  // Get a substantial chunk from the end
+  const lastChunk = text.slice(-400);
+
+  // Try to find a good starting point (sentence or paragraph break)
+  const breakPatterns = ['\n\n', '. ', '.\n', '! ', '?\n'];
+  let bestStart = 0;
+
+  for (const pattern of breakPatterns) {
+    const index = lastChunk.indexOf(pattern);
+    if (index > 100 && index < 300) { // Sweet spot for readable content
+      bestStart = index + pattern.length;
+      break;
+    }
+  }
+
+  // Extract the final part
+  const finalPart = bestStart > 0 ? lastChunk.slice(bestStart) : lastChunk.slice(-400);
+
+  // Add ellipsis if we're showing a truncated version
+  return bestStart > 0 || text.length > 600 ? '...' + finalPart : finalPart;
+};
 
 /**
  * Component to display AI reasoning tokens in a collapsible, visually distinct format
@@ -18,129 +52,93 @@ const PureReasoningDisplay: React.FC<ReasoningDisplayProps> = ({
   reasoning,
   messageId,
   className = '',
-  isComplete = true
+  isComplete = true,
+  model = null
 }) => {
-  const { settings } = useReasoningSettings();
-  const [isExpanded, setIsExpanded] = useState(settings.showByDefault);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
+  // Check if the model actually supports reasoning using our improved detection
+  const modelSupportsReasoning = model ? getReasoningModelInfoFromAPI(model).supportsReasoning : true;
+
+  // Handle smooth transitions
+  useEffect(() => {
+    if (isExpanded) {
+      setShouldRender(true);
+      setIsClosing(false);
+    } else {
+      setIsClosing(true);
+      const renderTimer = setTimeout(() => setShouldRender(false), 250);
+      return () => {
+        clearTimeout(renderTimer);
+      };
+    }
+  }, [isExpanded]);
+
+  // Don't render if no reasoning content
   if (!reasoning || reasoning.trim() === '') {
     return null;
   }
 
-  return (
-    <div className={`flex flex-col gap-2 pb-3 max-w-full w-full ${className}`}>
-      {/* Collapsible Header */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center gap-2 text-[rgb(var(--chat-message-username))] opacity-75 hover:opacity-100 transition-opacity duration-150 cursor-pointer group"
-        aria-expanded={isExpanded}
-        aria-controls={`reasoning-content-${messageId}`}
-      >
-        <Brain className="w-4 h-4 text-purple-400" />
-        <span className="text-sm font-medium">AI Reasoning</span>
-        {isExpanded ? (
-          <ChevronUp className="w-4 h-4 transition-transform duration-150 group-hover:scale-110" />
-        ) : (
-          <ChevronDown className="w-4 h-4 transition-transform duration-150 group-hover:scale-110" />
-        )}
-      </button>
+  // Don't render if model doesn't support reasoning (context-aware hiding)
+  if (model && !modelSupportsReasoning) {
+    return null;
+  }
 
-      {/* Collapsible Content */}
-      {isExpanded && (
-        <div 
-          id={`reasoning-content-${messageId}`}
-          className="reasoning-content rounded-lg border border-purple-500/20 bg-gradient-to-br from-purple-900/10 to-purple-800/5 backdrop-blur-sm"
-          style={{
-            background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.08) 0%, rgba(126, 34, 206, 0.04) 100%)',
-          }}
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  return (
+    <div className={`flex flex-col gap-3 pb-3 max-w-full w-full ${className}`}>
+        {/* Compact Toggle Button */}
+        <button
+          onClick={toggleExpanded}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[rgb(var(--reasoning-content-bg))]/60 text-[rgb(var(--reasoning-header-text))] hover:text-[rgb(var(--reasoning-text))] hover:bg-[rgb(var(--reasoning-content-bg))]/90 hover:border-[rgb(var(--reasoning-header-icon))]/30 transition-all duration-200 group self-start backdrop-blur-sm"
+          aria-expanded={isExpanded}
+          aria-controls={`reasoning-content-${messageId}`}
+          aria-label={isExpanded ? 'Hide AI reasoning' : 'Show AI reasoning'}
         >
-          {/* Content Header */}
-          <div className="px-4 py-2 border-b border-purple-500/10 bg-purple-900/5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-purple-300 opacity-75">
-                Internal Reasoning Process
-              </span>
-              {!isComplete && (
-                <span className="text-xs text-yellow-400 opacity-75">
-                  ⚠️ Truncated
-                </span>
-              )}
+          <Brain className="w-3.5 h-3.5 text-[rgb(var(--reasoning-header-icon))] transition-all duration-200 group-hover:scale-110" />
+          <span className="text-xs font-medium whitespace-nowrap">
+            AI Reasoning
+          </span>
+          {isExpanded ? (
+            <ChevronUp className="w-3 h-3 transition-transform duration-200 group-hover:scale-110 opacity-70" />
+          ) : (
+            <ChevronDown className="w-3 h-3 transition-transform duration-200 group-hover:scale-110 opacity-70" />
+          )}
+        </button>
+
+        {/* Reasoning Content Window - Unified for both states */}
+        {(shouldRender || !isExpanded) && (
+          <div
+            className={`reasoning-window cursor-pointer ${
+              !isExpanded
+                ? 'reasoning-preview-state'
+                : isClosing
+                  ? 'reasoning-content-exit'
+                  : 'reasoning-content-enter'
+            }`}
+            onClick={!isExpanded ? toggleExpanded : undefined}
+          >
+            {/* Content Container */}
+            <div className={`${isExpanded ? 'reasoning-content-container' : 'reasoning-preview-container'}`}>
+              <div className={`${isExpanded ? 'reasoning-content-inner' : 'reasoning-preview-content'}`}>
+                <MarkdownRenderer
+                  content={isExpanded ? reasoning : getLastPartOfReasoning(reasoning)}
+                  className={`${isExpanded ? 'reasoning-markdown' : 'reasoning-preview-markdown'}`}
+                  isStreaming={false}
+                />
+              </div>
             </div>
           </div>
+        )}
 
-          {/* Reasoning Content */}
-          <div className="p-4">
-            <MarkdownRenderer
-              content={reasoning}
-              className="reasoning-markdown text-sm text-[rgb(var(--chat-message-text))] opacity-90"
-              isStreaming={false}
-            />
-          </div>
-        </div>
-      )}
-
-      <style jsx>{`
-        .reasoning-content {
-          box-shadow: 0 4px 12px rgba(147, 51, 234, 0.1);
-        }
-        
-        .reasoning-markdown {
-          font-size: 0.875rem;
-          line-height: 1.5;
-        }
-        
-        .reasoning-markdown h1,
-        .reasoning-markdown h2,
-        .reasoning-markdown h3,
-        .reasoning-markdown h4,
-        .reasoning-markdown h5,
-        .reasoning-markdown h6 {
-          color: rgb(var(--chat-message-text));
-          opacity: 0.95;
-          margin-top: 1rem;
-          margin-bottom: 0.5rem;
-        }
-        
-        .reasoning-markdown p {
-          margin-bottom: 0.75rem;
-        }
-        
-        .reasoning-markdown code {
-          background-color: rgba(147, 51, 234, 0.15);
-          color: rgb(var(--chat-message-text));
-          padding: 0.125rem 0.25rem;
-          border-radius: 0.25rem;
-          font-size: 0.8125rem;
-        }
-        
-        .reasoning-markdown pre {
-          background-color: rgba(147, 51, 234, 0.1);
-          border: 1px solid rgba(147, 51, 234, 0.2);
-          border-radius: 0.5rem;
-          padding: 1rem;
-          margin: 0.75rem 0;
-          overflow-x: auto;
-        }
-        
-        .reasoning-markdown blockquote {
-          border-left: 3px solid rgba(147, 51, 234, 0.4);
-          padding-left: 1rem;
-          margin: 0.75rem 0;
-          opacity: 0.8;
-        }
-        
-        .reasoning-markdown ul,
-        .reasoning-markdown ol {
-          margin: 0.5rem 0;
-          padding-left: 1.5rem;
-        }
-        
-        .reasoning-markdown li {
-          margin-bottom: 0.25rem;
-        }
-      `}</style>
     </div>
   );
+
 };
 
 export const ReasoningDisplay = memo(PureReasoningDisplay, (prevProps, nextProps) => {
@@ -148,7 +146,8 @@ export const ReasoningDisplay = memo(PureReasoningDisplay, (prevProps, nextProps
     prevProps.reasoning === nextProps.reasoning &&
     prevProps.messageId === nextProps.messageId &&
     prevProps.className === nextProps.className &&
-    prevProps.isComplete === nextProps.isComplete
+    prevProps.isComplete === nextProps.isComplete &&
+    prevProps.model?.id === nextProps.model?.id
   );
 });
 

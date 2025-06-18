@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import React, { lazy, Suspense } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 
 // Lazy load devtools to reduce bundle size and potential issues
 const ReactQueryDevtools = lazy(() =>
@@ -31,18 +32,22 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <ErrorBoundary>
             <QueryClientProvider client={queryClient}>
                 <AuthProvider>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="dark"
-                        enableSystem={false}
-                        disableTransitionOnChange
-                    >
-                        <TooltipProvider>
-                            <Toaster />
-                            <Sonner />
-                            {children}
-                        </TooltipProvider>
-                    </ThemeProvider>
+                    <WorkspaceProvider>
+                        <ThemeProvider
+                            attribute="class"
+                            defaultTheme="dark"
+                            enableSystem={false}
+                            disableTransitionOnChange
+                        >
+                            <TooltipProvider>
+                                <>
+                                    <Toaster />
+                                    <Sonner />
+                                    {children}
+                                </>
+                            </TooltipProvider>
+                        </ThemeProvider>
+                    </WorkspaceProvider>
                 </AuthProvider>
                 {process.env.NODE_ENV === 'development' && (
                     <Suspense fallback={null}>

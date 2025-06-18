@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { chatService } from '@/lib/supabase/chat-service'
-import type { ChatCompletionChunk } from '@/lib/types'
+import type { ChatCompletionChunk, WebSearchAnnotation } from '@/lib/types'
 import { streamingMonitor } from '@/lib/performance/streaming-metrics'
 
 interface StreamingOptions {
@@ -17,6 +17,7 @@ interface StreamBuffer {
   reasoning: string
   chunks: string[]
   reasoningChunks: string[]
+  annotations: WebSearchAnnotation[]
   lastUpdate: number
   timeoutId?: NodeJS.Timeout
 }
@@ -44,7 +45,7 @@ export function useOptimizedStreaming() {
       // Track database write for performance monitoring
       streamingMonitor.recordDbWrite(messageId)
 
-      // Update message in database with content and reasoning
+      // Update message in database with content, reasoning, and annotations
       const updateData: any = {
         content: buffer.content,
         ...(isComplete && { is_complete: true })
@@ -55,12 +56,17 @@ export function useOptimizedStreaming() {
         updateData.reasoning = buffer.reasoning
       }
 
+      // Include annotations if available
+      if (buffer.annotations.length > 0) {
+        updateData.annotations = buffer.annotations
+      }
+
       await chatService.updateMessage(messageId, updateData)
 
       // Track render for performance monitoring
       streamingMonitor.recordRender(messageId)
 
-      // Optimized query invalidation - only invalidate specific chat
+      // Optimized query update - preserve optimistic updates during streaming
       queryClient.setQueryData(['chat', chatId], (oldData: any) => {
         if (!oldData) return oldData
 
@@ -72,12 +78,27 @@ export function useOptimizedStreaming() {
                   ...msg,
                   content: buffer.content,
                   reasoning: buffer.reasoning || msg.reasoning,
-                  is_complete: isComplete
+                  annotations: buffer.annotations.length > 0 ? buffer.annotations : msg.annotations,
+                  is_complete: isComplete,
+                  // Add timestamp to help identify fresh optimistic updates
+                  _optimistic_update: Date.now()
                 }
               : msg
           )
         }
       })
+
+      // Set a longer stale time for streaming messages to prevent premature refetching
+      if (!isComplete) {
+        queryClient.setQueryDefaults(['chat', chatId], {
+          staleTime: 1000 * 60 * 2, // 2 minutes during streaming
+        })
+      } else {
+        // Reset to normal stale time when complete
+        queryClient.setQueryDefaults(['chat', chatId], {
+          staleTime: 1000 * 60 * 5, // 5 minutes when complete
+        })
+      }
 
       // Clear timeout if exists
       if (buffer.timeoutId) {
@@ -106,8 +127,9 @@ export function useOptimizedStreaming() {
     const { chatId, messageId, onChunk, bufferSize = 3, bufferTimeMs = 80 } = options
     const content = chunk.choices?.[0]?.delta?.content
     const reasoning = chunk.choices?.[0]?.delta?.reasoning
+    const annotations = chunk.choices?.[0]?.delta?.annotations
 
-    if (!content && !reasoning) return
+    if (!content && !reasoning && !annotations) return
 
     // Get or create buffer for this message
     let buffer = bufferRef.current.get(messageId)
@@ -117,6 +139,7 @@ export function useOptimizedStreaming() {
         reasoning: '',
         chunks: [],
         reasoningChunks: [],
+        annotations: [],
         lastUpdate: Date.now()
       }
       bufferRef.current.set(messageId, buffer)
@@ -134,6 +157,11 @@ export function useOptimizedStreaming() {
     if (reasoning) {
       buffer.reasoning += reasoning
       buffer.reasoningChunks.push(reasoning)
+    }
+
+    // Handle web search annotations
+    if (annotations && annotations.length > 0) {
+      buffer.annotations.push(...annotations)
     }
 
     // Call onChunk callback for immediate UI feedback (this provides smooth streaming)

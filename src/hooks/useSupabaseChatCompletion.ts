@@ -1,16 +1,24 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { chatService } from '@/lib/supabase/chat-service'
 import { OpenRouterClient } from '@/lib/api/openrouter'
 import { useOptimizedStreaming } from './useOptimizedStreaming'
 import { useReasoningSettings } from '@/stores/ReasoningStore'
+import { useRateLimit } from './useRateLimit'
+import { rateLimitService } from '@/lib/services/rate-limit-service'
+import type { FileAttachment, ImageContent, FileContent, MessageContent } from '@/lib/types'
 
 export function useSupabaseChatCompletion(apiKey: string | null, chatId: string | null) {
   const queryClient = useQueryClient()
   const [client, setClient] = useState<OpenRouterClient | null>(null)
   const [isApiKeyValid, setIsApiKeyValid] = useState<boolean | null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
   const { processStream, cleanup } = useOptimizedStreaming()
   const { getReasoningConfig } = useReasoningSettings()
+  const { executeWithRateLimit, handleRateLimitError } = useRateLimit({
+    showToasts: true,
+    autoRetry: true,
+  })
 
   // Initialize the client when API key is provided
   useEffect(() => {
@@ -32,14 +40,18 @@ export function useSupabaseChatCompletion(apiKey: string | null, chatId: string 
 
   // Mutation for sending messages and streaming responses
   const sendMessageMutation = useMutation({
-    mutationFn: async ({ 
-      content, 
-      modelId 
-    }: { 
+    mutationFn: async ({
+      content,
+      modelId,
+      webSearchEnabled = false,
+      attachments = []
+    }: {
       content: string
       modelId: string
+      webSearchEnabled?: boolean
+      attachments?: FileAttachment[]
     }) => {
-      console.log('useSupabaseChatCompletion: Starting completion for:', content, 'modelId:', modelId)
+      console.log('useSupabaseChatCompletion: Starting completion for:', content, 'modelId:', modelId, 'webSearch:', webSearchEnabled, 'attachments:', attachments.length)
       if (!client) throw new Error("API client not initialized")
       if (!isApiKeyValid) throw new Error("Invalid API key")
       if (!chatId) throw new Error("No chat ID provided")
@@ -62,32 +74,104 @@ export function useSupabaseChatCompletion(apiKey: string | null, chatId: string 
         throw new Error("No incomplete assistant message found. Make sure ChatInput creates a placeholder first.")
       }
 
+      // Helper function to convert file attachments to OpenRouter content format
+      const convertAttachmentsToContent = (attachments: FileAttachment[]): (ImageContent | FileContent)[] => {
+        return attachments.map(attachment => {
+          if (attachment.type === 'image') {
+            return {
+              type: 'image_url',
+              image_url: {
+                url: attachment.data
+              }
+            } as ImageContent;
+          } else {
+            return {
+              type: 'file',
+              file: {
+                filename: attachment.name,
+                file_data: attachment.data
+              }
+            } as FileContent;
+          }
+        });
+      };
+
       // Extract messages for the API request (exclude the pending assistant message)
       const messages = chat.messages
         .filter(msg => msg.id !== assistantMessage.id && msg.content.trim() !== '')
         .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-        .map(msg => ({
-          role: msg.role as 'user' | 'assistant' | 'system',
-          content: msg.content,
-        }))
+        .map(msg => {
+          // Handle messages with attachments
+          if (msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0) {
+            const messageAttachments = msg.attachments as FileAttachment[];
+            const attachmentContent = convertAttachmentsToContent(messageAttachments);
+
+            // Create content array with text and attachments
+            const contentArray: (MessageContent | ImageContent | FileContent)[] = [];
+
+            // Add text content if present
+            if (msg.content.trim()) {
+              contentArray.push({
+                type: 'text',
+                text: msg.content
+              } as MessageContent);
+            }
+
+            // Add attachment content
+            contentArray.push(...attachmentContent);
+
+            return {
+              role: msg.role as 'user' | 'assistant' | 'system',
+              content: contentArray,
+            };
+          } else {
+            // Simple text message
+            return {
+              role: msg.role as 'user' | 'assistant' | 'system',
+              content: msg.content,
+            };
+          }
+        })
       
       // Set up streaming with reasoning-aware token limits
-      const reasoningConfig = getReasoningConfig()
+      const reasoningConfig = getReasoningConfig(modelId)
 
       // Increase token limit when reasoning is enabled to account for reasoning tokens
-      const baseTokenLimit = 1000
+      // Increased base limit from 1000 to 2000 to prevent message cut-offs
+      const baseTokenLimit = 2000
       const maxTokens = reasoningConfig?.enabled
-        ? Math.min(baseTokenLimit + (reasoningConfig.max_tokens || 2000), 4000) // Allow more tokens for reasoning
+        ? Math.min(baseTokenLimit + (reasoningConfig.max_tokens || 4000), 8000) // Allow more tokens for reasoning
         : baseTokenLimit
 
-      const stream = await client.streamChatCompletion({
-        model: modelId,
-        messages,
-        stream: true,
-        max_tokens: maxTokens,
-        temperature: 0.7,
-        ...(reasoningConfig && { reasoning: reasoningConfig }),
-      })
+      // Prepare web search configuration
+      let webSearchConfig = {}
+      if (webSearchEnabled) {
+        // Use the plugin approach for web search with default settings
+        webSearchConfig = {
+          plugins: [{
+            id: 'web' as const,
+            max_results: 5,
+            search_prompt: `A web search was conducted on ${new Date().toLocaleDateString()}. Incorporate the following web search results into your response. IMPORTANT: Cite them using markdown links named using the domain of the source. Example: [nytimes.com](https://nytimes.com/some-page).`
+          }]
+        }
+      }
+
+      // Create abort controller for this request
+      const abortController = new AbortController()
+      abortControllerRef.current = abortController
+
+      // Execute streaming request with rate limit handling
+      const stream = await executeWithRateLimit(async () => {
+        return await client.streamChatCompletion({
+          model: modelId,
+          messages,
+          stream: true,
+          max_tokens: maxTokens,
+          temperature: 0.7,
+          ...(reasoningConfig && { reasoning: reasoningConfig }),
+          ...webSearchConfig,
+        }, abortController.signal)
+      }, { maxRetries: 3 })
       
       // Use optimized streaming with aggressive buffering for smooth animation
       const generationId = await processStream(stream, {
@@ -104,7 +188,14 @@ export function useSupabaseChatCompletion(apiKey: string | null, chatId: string 
               ...oldData,
               messages: oldData.messages.map((msg: any) =>
                 msg.id === assistantMessage.id
-                  ? { ...msg, content, is_complete: isComplete }
+                  ? {
+                      ...msg,
+                      content,
+                      is_complete: isComplete,
+                      // Mark as optimistic update to prevent conflicts with real-time sync
+                      _streaming_update: !isComplete,
+                      _last_update: Date.now()
+                    }
                   : msg
               )
             }
@@ -118,23 +209,38 @@ export function useSupabaseChatCompletion(apiKey: string | null, chatId: string 
       }
     },
     onSuccess: () => {
+      // Clear abort controller on success
+      abortControllerRef.current = null
       queryClient.invalidateQueries({ queryKey: ['chat', chatId] })
       queryClient.invalidateQueries({ queryKey: ['user-chats'] })
     },
-    onError: (error: any) => {
+    onError: async (error: any) => {
+      // Clear abort controller on error
+      abortControllerRef.current = null
+
+      // Don't show error for user-initiated cancellation
+      if (error.name === 'AbortError') {
+        console.log('Chat completion cancelled by user')
+        return
+      }
+
       console.error("Error sending message:", error)
 
       // Cleanup any pending buffers
       cleanup()
 
-      // Handle specific OpenRouter errors
-      if (error.message?.includes('402')) {
-        console.error("OpenRouter Credits Error: Insufficient credits or token limit exceeded")
-        // You could show a user-friendly notification here
-      } else if (error.message?.includes('401')) {
-        console.error("OpenRouter Auth Error: Invalid API key")
-      } else if (error.message?.includes('429')) {
-        console.error("OpenRouter Rate Limit Error: Too many requests")
+      // Handle rate limit errors specifically
+      if (rateLimitService.isRateLimitError(error)) {
+        await handleRateLimitError(error)
+      } else {
+        // Handle other specific OpenRouter errors
+        if (error.message?.includes('402')) {
+          console.error("OpenRouter Credits Error: Insufficient credits or token limit exceeded")
+        } else if (error.message?.includes('401')) {
+          console.error("OpenRouter Auth Error: Invalid API key")
+        } else if (error.status === 503) {
+          console.error("OpenRouter Service Error: Service temporarily unavailable")
+        }
       }
     }
   })
@@ -247,9 +353,19 @@ export function useSupabaseChatCompletion(apiKey: string | null, chatId: string 
     resumeIncompleteMessages()
   }, [client, chatId, resumeMessageStream])
 
+  // Stop generation function
+  const stopGeneration = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
+  }, [])
+
   return {
     sendMessage: sendMessageMutation.mutate,
     isLoading: sendMessageMutation.isPending,
+    isGenerating: sendMessageMutation.isPending,
+    stopGeneration,
     isApiKeyValid,
     error: sendMessageMutation.error,
   }

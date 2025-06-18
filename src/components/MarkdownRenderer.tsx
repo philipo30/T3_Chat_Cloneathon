@@ -71,14 +71,20 @@ const components: Components = {
     <hr {...props} className="my-8 border-0 h-px bg-gradient-to-r from-transparent via-[rgb(var(--border))]/40 to-transparent" />
   ),
   ul: ({ children, ...props }: any) => (
-    <ul {...props} className="space-y-1 my-4">{children}</ul>
+    <ul {...props} className="list-disc list-inside space-y-1 my-4 pl-4" style={{
+      color: 'rgb(var(--foreground))'
+    }}>{children}</ul>
   ),
   ol: ({ children, ...props }: any) => (
-    <ol {...props} className="space-y-1 my-4">{children}</ol>
+    <ol {...props} className="list-decimal list-inside space-y-1 my-4 pl-4" style={{
+      color: 'rgb(var(--foreground))'
+    }}>{children}</ol>
   ),
   li: ({ children, ...props }: any) => (
-    <li {...props} className="text-[rgb(var(--foreground))] leading-relaxed flex items-start">
-      <span className="flex-1">{children}</span>
+    <li {...props} className="text-[rgb(var(--foreground))] leading-relaxed" style={{
+      color: 'rgb(var(--foreground))'
+    }}>
+      {children}
     </li>
   ),
 };
@@ -92,7 +98,7 @@ function CodeBlock({ children, className, ...props }: CodeComponentProps) {
     const lang = match[1];
     return (
       <div
-        className={`rounded-lg overflow-hidden shadow-sm backdrop-blur-sm border ${isMinimized ? '!my-0 !mt-0 !mb-0' : 'my-6'}`}
+        className={`rounded-lg overflow-hidden shadow-sm backdrop-blur-sm border ${isMinimized ? '!my-0 !mt-0 !mb-0' : 'my-0.5'}`}
         style={{
           backgroundColor: 'rgb(var(--chat-code-block-bg))',
           borderColor: 'rgb(var(--chat-code-block-border))',
@@ -112,7 +118,7 @@ function CodeBlock({ children, className, ...props }: CodeComponentProps) {
             <ShikiHighlighter
               language={lang}
               theme="material-theme-darker"
-              className="text-sm font-mono p-6 leading-relaxed block"
+              className="text-sm font-mono p-0.5 leading-relaxed block"
               showLanguage={false}
             >
               {String(children)}
@@ -123,7 +129,7 @@ function CodeBlock({ children, className, ...props }: CodeComponentProps) {
     );
   }
 
-  const baseClasses = 'mx-1 font-mono rounded-md shadow-sm backdrop-blur-sm border';
+  const baseClasses = 'mx-1 font-mono shadow-sm backdrop-blur-sm border';
   const sizeClasses = size === 'small' ? 'px-1.5 py-0.5 text-xs' : 'px-2 py-1 text-sm';
 
   return (
@@ -308,7 +314,7 @@ function FullscreenCodeModal({
           <ShikiHighlighter
             language={lang}
             theme="material-theme-darker"
-            className="text-sm font-mono p-6 leading-relaxed block"
+            className="text-sm font-mono p-1 leading-relaxed block"
             showLanguage={false}
           >
             {codeString}
@@ -489,8 +495,9 @@ const MemoizedMarkdown = memo(
            prose-em:text-[rgb(var(--muted-foreground))] prose-em:italic
            prose-a:text-[rgb(var(--primary))] prose-a:no-underline hover:prose-a:underline prose-a:transition-all
            prose-blockquote:border-l-[rgb(var(--primary))] prose-blockquote:bg-[rgb(var(--secondary))]/30 prose-blockquote:rounded-r-md prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:my-4
-           prose-ul:text-[rgb(var(--foreground))] prose-ol:text-[rgb(var(--foreground))]
+           prose-ul:text-[rgb(var(--foreground))] prose-ol:text-[rgb(var(--foreground))] prose-ul:list-disc prose-ol:list-decimal
            prose-li:text-[rgb(var(--foreground))] prose-li:leading-relaxed prose-li:mb-1
+           prose-li:marker:text-[rgb(var(--primary))]
            prose-table:text-[rgb(var(--foreground))] prose-thead:border-b-[rgb(var(--border))]
            prose-th:text-[rgb(var(--foreground))] prose-th:font-semibold prose-th:py-2 prose-th:px-3
            prose-td:py-2 prose-td:px-3 prose-td:border-t-[rgb(var(--border))]/20`

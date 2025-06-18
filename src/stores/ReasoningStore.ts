@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ReasoningConfig } from '@/lib/types';
+import { getReasoningModelInfo } from '@/lib/reasoning-models';
 
 export interface ReasoningSettings {
   enabled: boolean;
@@ -13,7 +14,7 @@ export interface ReasoningSettings {
 interface ReasoningStore {
   settings: ReasoningSettings;
   updateSettings: (updates: Partial<ReasoningSettings>) => void;
-  getReasoningConfig: () => ReasoningConfig | undefined;
+  getReasoningConfig: (modelId?: string) => ReasoningConfig | undefined;
   resetToDefaults: () => void;
 }
 
@@ -40,11 +41,19 @@ export const useReasoningStore = create<ReasoningStore>()(
         }));
       },
 
-      getReasoningConfig: () => {
+      getReasoningConfig: (modelId?: string) => {
         const { settings } = get();
-        
+
         if (!settings.enabled) {
           return undefined;
+        }
+
+        // Check if model supports reasoning
+        if (modelId) {
+          const modelInfo = getReasoningModelInfo(modelId);
+          if (!modelInfo.supportsReasoning) {
+            return undefined;
+          }
         }
 
         const config: ReasoningConfig = {
@@ -52,11 +61,33 @@ export const useReasoningStore = create<ReasoningStore>()(
           exclude: settings.exclude,
         };
 
-        // Add effort or max_tokens based on settings
-        if (settings.maxTokens && settings.maxTokens > 0) {
-          config.max_tokens = settings.maxTokens;
+        // Add effort or max_tokens based on model capabilities and settings
+        if (modelId) {
+          const modelInfo = getReasoningModelInfo(modelId);
+
+          if (modelInfo.parameterType === 'max_tokens') {
+            // For max_tokens models, always use max_tokens if available
+            config.max_tokens = settings.maxTokens && settings.maxTokens > 0
+              ? settings.maxTokens
+              : 2000; // Default for max_tokens models
+          } else if (modelInfo.parameterType === 'effort') {
+            // For effort models, use effort level
+            config.effort = settings.effort;
+          } else if (modelInfo.parameterType === 'both') {
+            // For models supporting both, prefer max_tokens if set, otherwise use effort
+            if (settings.maxTokens && settings.maxTokens > 0) {
+              config.max_tokens = settings.maxTokens;
+            } else {
+              config.effort = settings.effort;
+            }
+          }
         } else {
-          config.effort = settings.effort;
+          // Fallback behavior when no model specified
+          if (settings.maxTokens && settings.maxTokens > 0) {
+            config.max_tokens = settings.maxTokens;
+          } else {
+            config.effort = settings.effort;
+          }
         }
 
         return config;

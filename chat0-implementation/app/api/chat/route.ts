@@ -5,6 +5,8 @@ import { streamText, smoothStream } from 'ai';
 import { headers } from 'next/headers';
 import { getModelConfig, AIModel } from '@/lib/models';
 import { NextRequest, NextResponse } from 'next/server';
+import { CacheStrategyService } from '@/lib/services/cache-strategy';
+import type { ChatMessage } from '@/lib/types';
 
 export const maxDuration = 60;
 
@@ -14,8 +16,24 @@ export async function POST(req: NextRequest) {
     const headersList = await headers();
 
     const modelConfig = getModelConfig(model as AIModel);
-
     const apiKey = headersList.get(modelConfig.headerKey) as string;
+
+    // Apply caching strategy for OpenRouter models
+    let optimizedMessages = messages;
+    if (modelConfig.provider === 'openrouter') {
+      try {
+        const cacheStrategy = new CacheStrategyService(modelConfig.modelId);
+        optimizedMessages = cacheStrategy.applyCachingStrategy(messages);
+        console.log(`Applied caching strategy for ${modelConfig.modelId}:`, {
+          originalLength: messages.length,
+          optimizedLength: optimizedMessages.length,
+          cacheConfig: cacheStrategy.getCacheConfig()
+        });
+      } catch (error) {
+        console.warn('Failed to apply caching strategy, using original messages:', error);
+        optimizedMessages = messages;
+      }
+    }
 
     let aiModel;
     switch (modelConfig.provider) {
@@ -46,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     const result = streamText({
       model: aiModel,
-      messages,
+      messages: optimizedMessages,
       onError: (error) => {
         console.log('error', error);
       },

@@ -6,18 +6,14 @@ import { Loader2 } from "lucide-react";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatMessage } from "@/components/ChatMessage";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
+import { RateLimitError } from "@/components/RateLimitError";
 import { useApiKey } from "@/hooks/useApiKey";
 import { useSupabaseChat } from "@/hooks/useSupabaseChats";
 import { useSupabaseChatCompletion } from "@/hooks/useSupabaseChatCompletion";
-import { useQuery } from "@tanstack/react-query";
-import type { OpenRouterModel } from "@/lib/types";
+import { useChatAutoScroll } from "@/hooks/useChatAutoScroll";
+import { ScrollToBottomButton } from "@/components/ScrollToBottomButton";
 
-async function fetchModels(): Promise<OpenRouterModel[]> {
-  const response = await fetch('https://openrouter.ai/api/v1/models');
-  if (!response.ok) throw new Error('Failed to fetch models');
-  const data = await response.json();
-  return data.data;
-}
+// Removed unused imports and functions
 
 interface ChatContentProps {
   chatId: string;
@@ -28,28 +24,59 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
   const router = useRouter();
   const [inputValue, setInputValue] = useState("");
   const [isWelcomeVisible, setIsWelcomeVisible] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const { apiKey } = useApiKey();
   const { chat, isLoadingChat, chatError } = useSupabaseChat(chatId);
   const { sendMessage, isLoading, error: completionError } = useSupabaseChatCompletion(apiKey, chatId);
 
-  const { data: allModels } = useQuery<OpenRouterModel[]>({
-    queryKey: ['models'],
-    queryFn: fetchModels,
-  });
+  // Models query removed since it's not used in this component
 
   const messages = useMemo(() => {
     if (!chat?.messages) return [];
-    return [...chat.messages].sort((a, b) => 
+
+    // Deduplicate messages by ID to prevent React key conflicts
+    const uniqueMessages = chat.messages.reduce((acc, message) => {
+      const existingIndex = acc.findIndex(m => m.id === message.id);
+      if (existingIndex >= 0) {
+        // Keep the most recent version (higher created_at or updated_at)
+        const existing = acc[existingIndex];
+        const messageTime = new Date(message.updated_at || message.created_at).getTime();
+        const existingTime = new Date(existing.updated_at || existing.created_at).getTime();
+
+        console.log(`Duplicate message detected: ${message.id}, keeping ${messageTime > existingTime ? 'newer' : 'existing'} version`);
+
+        if (messageTime > existingTime) {
+          acc[existingIndex] = message;
+        }
+      } else {
+        acc.push(message);
+      }
+      return acc;
+    }, [] as typeof chat.messages);
+
+    // Sort by creation time
+    return uniqueMessages.sort((a, b) =>
       new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
   }, [chat?.messages]);
 
-  const modelName = useMemo(() => {
-    if (!allModels || !chat?.model_id) return chat?.model_id || 'Unknown Model';
-    const model = allModels.find(m => m.id === chat.model_id);
-    return model?.name || chat.model_id;
-  }, [allModels, chat?.model_id]);
+  // Determine if AI is currently streaming
+  const isStreaming = useMemo(() => {
+    if (!messages.length) return false;
+    const lastMessage = messages[messages.length - 1];
+    return lastMessage?.role === 'assistant' && !lastMessage.is_complete;
+  }, [messages]);
+
+  // Auto-scroll hook for chat behavior
+  const { scrollRef, showScrollButton, scrollToBottom, onMessageSent } = useChatAutoScroll({
+    messages,
+    isStreaming,
+    isLoading,
+    enabled: true
+  });
+
+  // Model name lookup removed since it's not used in this component
 
   // Handle chat not found
   useEffect(() => {
@@ -63,31 +90,30 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
     setIsWelcomeVisible(messages.length === 0 && !isLoadingChat);
   }, [messages.length, isLoadingChat]);
 
-  // Auto-trigger AI completion for new chats that have incomplete assistant messages
+  // Auto-trigger AI completion for new chats created from homepage
+  // This only runs once when a new chat loads with incomplete messages
   useEffect(() => {
     if (!chat || !messages.length || isLoading || completionError) return;
 
-    // Find incomplete assistant messages that need completion
-    const incompleteAssistantMessages = messages.filter(m =>
-      m.role === 'assistant' &&
-      !m.is_complete &&
-      (m.content === '...' || m.content === '')
-    );
+    // Only trigger for new chats that have exactly 2 messages (user + incomplete assistant)
+    // and the assistant message has no generation_id (indicating it's a new placeholder)
+    if (messages.length === 2) {
+      const [userMessage, assistantMessage] = messages;
 
-    // If there's an incomplete assistant message, find the user message before it
-    if (incompleteAssistantMessages.length > 0) {
-      const incompleteMessage = incompleteAssistantMessages[0];
-      const userMessages = messages.filter(m =>
-        m.role === 'user' &&
-        new Date(m.created_at) < new Date(incompleteMessage.created_at)
-      );
-
-      const lastUserMessage = userMessages.pop();
-      if (lastUserMessage) {
-        console.log('Auto-triggering AI completion for incomplete message:', lastUserMessage.content);
+      if (
+        userMessage?.role === 'user' &&
+        assistantMessage?.role === 'assistant' &&
+        !assistantMessage.is_complete &&
+        !assistantMessage.generation_id &&
+        assistantMessage.content === '...'
+      ) {
+        // Read web search preference from localStorage
+        const webSearchEnabled = localStorage.getItem('webSearchEnabled') === 'true';
+        console.log('Auto-triggering AI completion for new chat:', userMessage.content, 'with web search:', webSearchEnabled);
         sendMessage({
-          content: lastUserMessage.content,
-          modelId: lastUserMessage.model || chat.model_id,
+          content: userMessage.content,
+          modelId: userMessage.model || chat.model_id,
+          webSearchEnabled,
         });
       }
     }
@@ -95,6 +121,27 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
 
   const handleInputChange = (value: string) => {
     setInputValue(value);
+
+    // Enhanced typing detection for chat pages too
+    if (value.trim().length > 0) {
+      if (!isTyping) {
+        setIsTyping(true);
+        // Hide welcome screen if it's visible and user starts typing
+        if (isWelcomeVisible) {
+          setTimeout(() => {
+            setIsWelcomeVisible(false);
+          }, 150);
+        }
+      }
+    } else {
+      setIsTyping(false);
+      // Show welcome screen again if no messages and user clears input
+      if (messages.length === 0) {
+        setTimeout(() => {
+          setIsWelcomeVisible(true);
+        }, 100);
+      }
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -125,7 +172,10 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
         {/* Smooth gradient shadow overlay at top edge - matches chat input width */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-12 chat-content-fade-overlay" />
 
-        <div className="absolute inset-0 overflow-auto chat-scrollbar pb-36 pt-3.5 scrollbar-gutter-stable-both-edges">
+        <div
+          ref={scrollRef}
+          className="absolute inset-0 overflow-auto chat-scrollbar pb-36 pt-3.5 scrollbar-gutter-stable-both-edges"
+        >
           {/* Chat messages container */}
           <div
             role="log"
@@ -140,9 +190,9 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
               />
             ) : (
               <>
-                {messages.map(message => (
+                {messages.map((message, index) => (
                   <ChatMessage
-                    key={message.id}
+                    key={`${message.id}-${index}`}
                     message={message}
                   />
                 ))}
@@ -150,16 +200,25 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
                 {/* Show error message if there's a completion error */}
                 {completionError && (
                   <div className="mx-auto max-w-3xl px-4 py-2">
-                    <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 text-red-200">
-                      <p className="text-sm font-medium">AI Response Error</p>
-                      <p className="text-xs mt-1 opacity-80">
-                        {completionError.message?.includes('402')
-                          ? 'Insufficient OpenRouter credits. Please add credits to your account or try a different model.'
-                          : completionError.message?.includes('401')
-                          ? 'Invalid OpenRouter API key. Please check your API key settings.'
-                          : 'Failed to get AI response. Please try again.'}
-                      </p>
-                    </div>
+                    <RateLimitError
+                      error={completionError}
+                      onRetry={() => {
+                        // Retry the last message if possible
+                        if (messages.length > 0) {
+                          const lastUserMessage = [...messages]
+                            .reverse()
+                            .find(msg => msg.role === 'user');
+
+                          if (lastUserMessage) {
+                            sendMessage({
+                              content: lastUserMessage.content,
+                              modelId: lastUserMessage.model || chat?.model_id || '',
+                              webSearchEnabled: localStorage.getItem('webSearchEnabled') === 'true',
+                            });
+                          }
+                        }
+                      }}
+                    />
                   </div>
                 )}
               </>
@@ -168,6 +227,12 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
         </div>
       </div>
 
+      {/* Scroll to bottom button */}
+      <ScrollToBottomButton
+        visible={showScrollButton}
+        onClick={scrollToBottom}
+      />
+
       {/* Chat input */}
       <ChatInput
         value={inputValue}
@@ -175,6 +240,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
         onSubmit={handleSubmit}
         apiKey={apiKey}
         chatId={chatId}
+        onMessageSent={onMessageSent}
       />
     </>
   );
