@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { useSupabaseWorkspaces } from '@/hooks/useSupabaseWorkspaces'
+import { useSupabaseWorkspaces, useSupabaseWorkspace } from '@/hooks/useSupabaseWorkspaces'
 import { getDefaultWorkspace } from '@/lib/utils/workspace-utils'
 import { autoMigrateWorkspaces } from '@/lib/utils/workspace-migration'
-import type { Workspace, Folder } from '@/lib/supabase/database.types'
+import type { Folder, WorkspaceWithFoldersAndChats } from '@/lib/supabase/database.types'
 
 interface WorkspaceContextType {
   selectedWorkspaceId: string | null
   selectedFolderId: string | null
-  selectedWorkspace: Workspace | null
+  selectedWorkspace: WorkspaceWithFoldersAndChats | null
   selectedFolder: Folder | null
   setSelectedWorkspaceId: (workspaceId: string | null) => void
   setSelectedFolderId: (folderId: string | null) => void
@@ -23,8 +23,9 @@ interface WorkspaceProviderProps {
 export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({ children }) => {
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(null)
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
-  
+
   const { workspaces, isLoadingWorkspaces } = useSupabaseWorkspaces()
+  const { workspace: selectedWorkspace } = useSupabaseWorkspace(selectedWorkspaceId)
 
   // Perform automatic workspace migration on mount
   useEffect(() => {
@@ -50,13 +51,9 @@ export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({ children }
     setSelectedFolderId(null)
   }, [selectedWorkspaceId])
 
-  // Get current workspace and folder objects
-  const selectedWorkspace = selectedWorkspaceId 
-    ? workspaces.find(w => w.id === selectedWorkspaceId) || null
-    : null
-
+  // Get current folder object
   const selectedFolder = selectedFolderId && selectedWorkspace
-    ? selectedWorkspace.folders?.find(f => f.id === selectedFolderId) || null
+    ? selectedWorkspace.folders?.find((f: Folder) => f.id === selectedFolderId) || null
     : null
 
   const clearFolderSelection = () => {
@@ -66,7 +63,7 @@ export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({ children }
   const value: WorkspaceContextType = {
     selectedWorkspaceId,
     selectedFolderId,
-    selectedWorkspace,
+    selectedWorkspace: selectedWorkspace || null,
     selectedFolder,
     setSelectedWorkspaceId,
     setSelectedFolderId,

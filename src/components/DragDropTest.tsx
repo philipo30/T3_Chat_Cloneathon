@@ -7,20 +7,35 @@ import { DroppableArea } from './DroppableArea'
 export const DragDropTest: React.FC = () => {
   const mockWorkspace = {
     id: 'test-workspace',
+    user_id: 'test-user',
     name: 'Test Workspace',
+    description: 'Test workspace description',
+    color: '#8B5CF6',
+    icon: 'folder',
+    is_default: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
     folders: [
       {
         id: 'folder-1',
-        name: 'Test Folder',
-        color: '#8B5CF6',
         workspace_id: 'test-workspace',
+        user_id: 'test-user',
+        name: 'Test Folder',
+        description: 'Test folder description',
+        color: '#8B5CF6',
+        icon: 'folder',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         chats: [
           {
             id: 'chat-1',
+            user_id: 'test-user',
             title: 'Test Chat 1',
-            folder_id: 'folder-1',
-            workspace_id: 'test-workspace',
+            model_id: 'gpt-3.5-turbo',
             pinned: false,
+            pinned_at: null,
+            workspace_id: 'test-workspace',
+            folder_id: 'folder-1',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           }
@@ -30,10 +45,13 @@ export const DragDropTest: React.FC = () => {
     chats: [
       {
         id: 'chat-2',
+        user_id: 'test-user',
         title: 'Test Chat 2',
-        folder_id: null,
-        workspace_id: 'test-workspace',
+        model_id: 'gpt-3.5-turbo',
         pinned: false,
+        pinned_at: null,
+        workspace_id: 'test-workspace',
+        folder_id: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }
@@ -44,7 +62,7 @@ export const DragDropTest: React.FC = () => {
     <div className="p-4">
       <h2 className="text-lg font-bold mb-4">Drag and Drop Test</h2>
       <DragDropSidebar
-        workspace={mockWorkspace as any}
+        workspace={mockWorkspace}
         onChatClick={(chatId) => console.log('Chat clicked:', chatId)}
         onPinToggle={(chat) => console.log('Pin toggled:', chat.title)}
         onDeleteChat={(chatId) => console.log('Chat deleted:', chatId)}

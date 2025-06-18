@@ -63,7 +63,7 @@ export const MessageUtilityBar: React.FC<MessageUtilityBarProps> = ({
         // Trigger AI completion with the user message content
         await triggerCompletion({
           content: message.content,
-          modelId: message.model,
+          modelId: message.model || 'gpt-3.5-turbo',
           webSearchEnabled: localStorage.getItem('webSearchEnabled') === 'true',
         });
       } else {
@@ -84,7 +84,7 @@ export const MessageUtilityBar: React.FC<MessageUtilityBarProps> = ({
         if (lastUserMessage) {
           await triggerCompletion({
             content: lastUserMessage.content,
-            modelId: message.model,
+            modelId: message.model || 'gpt-3.5-turbo',
             webSearchEnabled: localStorage.getItem('webSearchEnabled') === 'true',
           });
         }

@@ -63,7 +63,7 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
   if ('captureEvents' in window) {
     // For older browsers that support captureEvents
     try {
-      (window as any).captureEvents(Event.ERROR);
+      (window as any).captureEvents((Event as any).ERROR);
       window.onerror = function(message, source, lineno, colno, error) {
         if (typeof message === 'string' && message.includes('unreachable code after return statement')) {
           return true; // Suppress the error

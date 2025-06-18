@@ -1,4 +1,4 @@
-import type { ChatMessage, MessageContent, CacheControl, Role } from '../types';
+import type { ChatMessage, MessageContent, ImageContent, FileContent, CacheControl, Role } from '../types';
 import { getCacheConfig, estimateTokens } from '../constants/cache-config';
 
 /**
@@ -98,7 +98,7 @@ export class CacheStrategyService {
    * Add cache breakpoint to a message
    */
   private addCacheBreakpoint(message: ChatMessage, isLastInSequence: boolean): ChatMessage {
-    const content: MessageContent[] = Array.isArray(message.content)
+    const content: (MessageContent | ImageContent | FileContent)[] = Array.isArray(message.content)
       ? message.content
       : [{ type: 'text', text: message.content }];
 
@@ -135,9 +135,9 @@ export class CacheStrategyService {
    */
   private estimateConversationTokens(messages: ChatMessage[]): number {
     return messages.reduce((total, message) => {
-      const content = typeof message.content === 'string' 
-        ? message.content 
-        : message.content.map(c => c.text).join(' ');
+      const content = typeof message.content === 'string'
+        ? message.content
+        : message.content.map(c => c.type === 'text' ? c.text : '').join(' ');
       return total + estimateTokens(content);
     }, 0);
   }

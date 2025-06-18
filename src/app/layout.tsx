@@ -8,22 +8,22 @@ import { Providers } from './providers'
 const metropolis = localFont({
   src: [
     {
-      path: '../../public/fonts/Metropolis-Regular.otf',
+      path: '../../public/fonts/Metropolis-Regular.ttf',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/Metropolis-Medium.otf',
+      path: '../../public/fonts/Metropolis-Medium.ttf',
       weight: '500',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/Metropolis-SemiBold.otf',
+      path: '../../public/fonts/Metropolis-SemiBold.ttf',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/Metropolis-Bold.otf',
+      path: '../../public/fonts/Metropolis-Bold.ttf',
       weight: '700',
       style: 'normal',
     },

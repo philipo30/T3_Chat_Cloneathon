@@ -41,8 +41,8 @@ export const ChatContent: React.FC<ChatContentProps> = ({ chatId, onApiKeyModalO
       if (existingIndex >= 0) {
         // Keep the most recent version (higher created_at or updated_at)
         const existing = acc[existingIndex];
-        const messageTime = new Date(message.updated_at || message.created_at).getTime();
-        const existingTime = new Date(existing.updated_at || existing.created_at).getTime();
+        const messageTime = new Date(message.created_at).getTime();
+        const existingTime = new Date(existing.created_at).getTime();
 
         console.log(`Duplicate message detected: ${message.id}, keeping ${messageTime > existingTime ? 'newer' : 'existing'} version`);
 

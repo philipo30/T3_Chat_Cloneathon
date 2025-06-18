@@ -39,7 +39,7 @@ export function useGenerationMetadata(
     },
     enabled: enabled && !!apiKey && !!generationId,
     staleTime,
-    cacheTime,
+    gcTime: cacheTime,
     retry: (failureCount, error) => {
       // Don't retry on 404 (generation not found) or 401 (unauthorized)
       if (error.message.includes('404') || error.message.includes('401')) {
@@ -89,7 +89,7 @@ export function useMultipleGenerationMetadata(
     },
     enabled: options.enabled !== false && !!apiKey && validIds.length > 0,
     staleTime: options.staleTime ?? 1000 * 60 * 60, // 1 hour
-    cacheTime: options.cacheTime ?? 1000 * 60 * 60 * 24, // 24 hours
+    gcTime: options.cacheTime ?? 1000 * 60 * 60 * 24, // 24 hours
     retry: false, // Don't retry batch requests to avoid overwhelming the API
   })
 }

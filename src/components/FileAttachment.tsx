@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { FileText, Image as ImageIcon, Download, Eye, X } from 'lucide-react';
 import { Button } from './ui/button';
-import type { FileAttachment } from '@/lib/types';
+import type { FileAttachment as FileAttachmentType } from '@/lib/types';
 import { formatFileSize, getFileTypeDisplayName } from '@/lib/utils/file-upload';
 
 interface FileAttachmentProps {
-  attachment: FileAttachment;
+  attachment: FileAttachmentType;
   className?: string;
   compact?: boolean;
 }

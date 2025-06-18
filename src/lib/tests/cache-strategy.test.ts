@@ -89,7 +89,7 @@ describe('Cache Strategy Service', () => {
       // Some messages should have cache control
       const messagesWithCache = result.filter(msg => {
         if (Array.isArray(msg.content)) {
-          return msg.content.some(c => c.cache_control);
+          return msg.content.some(c => c.type === 'text' && c.cache_control);
         }
         return false;
       });
@@ -117,7 +117,7 @@ describe('Cache Strategy Service', () => {
       
       if (Array.isArray(systemMessage.content)) {
         expect(systemMessage.content.length).toBe(2);
-        expect(systemMessage.content[1].cache_control).toEqual({ type: 'ephemeral' });
+        expect((systemMessage.content[1] as any).cache_control).toEqual({ type: 'ephemeral' });
       }
     });
 
@@ -132,8 +132,8 @@ describe('Cache Strategy Service', () => {
       
       if (Array.isArray(userMessage.content)) {
         expect(userMessage.content.length).toBe(2);
-        expect(userMessage.content[0].cache_control).toEqual({ type: 'ephemeral' });
-        expect(userMessage.content[1].text).toBe('What is the weather today?');
+        expect((userMessage.content[0] as any).cache_control).toEqual({ type: 'ephemeral' });
+        expect((userMessage.content[1] as any).text).toBe('What is the weather today?');
       }
     });
 

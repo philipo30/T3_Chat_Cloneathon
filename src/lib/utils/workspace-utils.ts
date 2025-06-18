@@ -1,8 +1,9 @@
-import type { 
-  Workspace, 
-  Folder, 
-  Chat, 
-  WorkspaceWithFoldersAndChats 
+import type {
+  Workspace,
+  Folder,
+  Chat,
+  WorkspaceWithFoldersAndChats,
+  FolderWithChats
 } from '@/lib/supabase/database.types'
 
 // Default workspace and folder icons
@@ -103,10 +104,15 @@ export function sortChats(chats: Chat[]): Chat[] {
 // Utility functions for organizing workspace data
 export function organizeWorkspaceData(workspace: WorkspaceWithFoldersAndChats) {
   // Sort folders to appear at the top (newest first for folder positioning)
-  const sortedFolders = sortFolders(workspace.folders).map(folder => ({
-    ...folder,
-    chats: sortChats(folder.chats)
-  }))
+  const sortedFolders = [...workspace.folders]
+    .sort((a, b) => {
+      // Sort by created_at (newest first) to ensure new folders appear at the top
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
+    .map((folder: FolderWithChats) => ({
+      ...folder,
+      chats: sortChats(folder.chats)
+    }))
 
   // Sort workspace direct chats (not in folders) with pinned first, then by time
   const sortedWorkspaceChats = sortChats(workspace.chats)
@@ -234,8 +240,8 @@ export function generateUniqueWorkspaceName(
 }
 
 export function generateUniqueFolderName(
-  baseName: string, 
-  existingFolders: Folder[]
+  baseName: string,
+  existingFolders: Array<{ name: string }>
 ): string {
   const existingNames = existingFolders.map(f => f.name.toLowerCase())
   
