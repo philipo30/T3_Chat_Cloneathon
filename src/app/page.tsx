@@ -6,21 +6,11 @@ import { TopBar } from "@/components/TopBar";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { ChatInput } from "@/components/ChatInput";
 import { DecorativeLine } from "@/components/DecorativeLine";
-import { useModelSelection } from "@/hooks/useModelSelection";
 
 export default function Page() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
   const [inputValue, setInputValue] = useState("");
-
-  // Model selection state
-  const {
-    selectedModel,
-    reasoningConfig,
-    availableModels,
-    updateModel,
-    updateReasoningConfig,
-  } = useModelSelection();
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -105,15 +95,7 @@ export default function Page() {
           </div>
 
           {/* Chat input */}
-          <ChatInput
-            value={inputValue}
-            onInputChange={handleInputChange}
-            selectedModel={selectedModel}
-            availableModels={availableModels}
-            reasoningConfig={reasoningConfig}
-            onModelChange={updateModel}
-            onReasoningConfigChange={updateReasoningConfig}
-          />
+          <ChatInput value={inputValue} onInputChange={handleInputChange} />
         </main>
       </div>
 
