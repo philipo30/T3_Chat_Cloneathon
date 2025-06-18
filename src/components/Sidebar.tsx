@@ -240,10 +240,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
           {shouldShowCollapseButton && (
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-0.5 rounded hover:bg-[rgb(var(--sidebar-component-button-hover-background))] transition-colors"
+              className="p-0.5 rounded hover:bg-[rgb(var(--sidebar-component-button-hover-background))] transition-colors sidebar-chevron-button"
             >
               <ChevronDown
-                className={`w-3 h-3 transition-transform duration-200 ${
+                className={`w-3 h-3 transition-transform duration-200 sidebar-chevron ${
                   isCollapsed ? '-rotate-90' : ''
                 }`}
               />
@@ -251,7 +251,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
           )}
           {!shouldShowCollapseButton && <div className="w-4" />}
 
-          {group.id === 'pinned' && <Pin className="w-3 h-3" />}
+          {group.id === 'pinned' && <Pin className="w-3 h-3 sidebar-pinned-icon" />}
 
           <span className="text-xs font-medium text-[rgb(var(--sidebar-component-search-placeholder))] uppercase tracking-wide">
             {group.label}
@@ -443,7 +443,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
         {chat.pinned ? (
           <PinOff className="w-3 h-3 sidebar-pinned-icon" />
         ) : (
-          <Pin className="w-3 h-3" />
+          <Pin className="w-3 h-3 text-[rgb(var(--sidebar-component-button-text))]" />
         )}
       </Button>
 
@@ -500,11 +500,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
         >
           <div className="flex items-center gap-2 p-2 rounded-md hover:bg-[rgb(var(--sidebar-component-button-hover-background))] transition-all duration-200 group">
             <div
-              className="flex items-center gap-2 flex-1 cursor-pointer"
+              className="flex items-center gap-2 flex-1 cursor-pointer sidebar-chevron-button"
               onClick={onToggleCollapse}
             >
               <ChevronDown
-                className={`w-3 h-3 transition-transform duration-200 ${
+                className={`w-3 h-3 transition-transform duration-200 sidebar-chevron ${
                   isCollapsed ? '-rotate-90' : ''
                 }`}
               />

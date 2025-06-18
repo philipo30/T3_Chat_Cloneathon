@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, EyeOff, Lock, Calendar, MessageSquare, ExternalLink, GitFork, LogIn } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Eye, EyeOff, Lock, Calendar, MessageSquare, ExternalLink, GitFork, LogIn, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { shareService } from "@/lib/supabase/share-service";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
@@ -37,7 +38,12 @@ export const SharedChatView: React.FC<SharedChatViewProps> = ({ shareId }) => {
   // Redirect to forked chat when fork is successful
   useEffect(() => {
     if (forkedChatId) {
-      router.push(`/chat/${forkedChatId}`);
+      // Small delay to let the user see the success message
+      const timer = setTimeout(() => {
+        router.push(`/chat/${forkedChatId}`);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
     }
   }, [forkedChatId, router]);
 
@@ -85,6 +91,7 @@ export const SharedChatView: React.FC<SharedChatViewProps> = ({ shareId }) => {
       return;
     }
 
+    console.log('Forking chat:', { shareId, needsPassword, hasPassword: !!password });
     forkSharedChat({ 
       shareId, 
       password: needsPassword ? password : undefined 
@@ -241,25 +248,47 @@ export const SharedChatView: React.FC<SharedChatViewProps> = ({ shareId }) => {
               {!authLoading && (
                 <>
                   {user ? (
-                    <Button
-                      onClick={handleForkChat}
-                      disabled={isForkingChat}
-                      size="sm"
-                      className="flex items-center gap-2 bg-gradient-to-b from-primary-button-gradient-from to-primary-button-gradient-to hover:from-primary-button-hover-gradient-from hover:to-primary-button-hover-gradient-to text-primary-button-text border border-primary-button-border"
-                    >
-                      <GitFork className="w-4 h-4" />
-                      {isForkingChat ? "Forking..." : "Fork Chat"}
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            onClick={handleForkChat}
+                            disabled={isForkingChat}
+                            size="sm"
+                            className="flex items-center gap-2 bg-gradient-to-b from-primary-button-gradient-from to-primary-button-gradient-to hover:from-primary-button-hover-gradient-from hover:to-primary-button-hover-gradient-to text-primary-button-text border border-primary-button-border disabled:opacity-50"
+                          >
+                            {isForkingChat ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <GitFork className="w-4 h-4" />
+                            )}
+                            {isForkingChat ? "Forking..." : "Fork Chat"}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Create your own copy of this conversation</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   ) : (
-                    <Button
-                      onClick={handleSignInToFork}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2"
-                    >
-                      <LogIn className="w-4 h-4" />
-                      Sign in to fork
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            onClick={handleSignInToFork}
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-2"
+                          >
+                            <LogIn className="w-4 h-4" />
+                            Sign in to fork
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Sign in to create your own copy of this conversation</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}
                 </>
               )}

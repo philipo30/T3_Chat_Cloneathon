@@ -338,8 +338,12 @@ class ShareService {
       // First get the shared chat with messages
       const sharedChat = await this.getSharedChat(shareId, password)
       
-      if (!sharedChat || !sharedChat.messages) {
-        throw new Error('Shared chat not found or has no messages')
+      if (!sharedChat) {
+        throw new Error('Shared chat not found')
+      }
+
+      if (!sharedChat.messages || sharedChat.messages.length === 0) {
+        throw new Error('This chat has no messages to fork')
       }
 
       // Get current user

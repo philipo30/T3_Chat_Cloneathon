@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS public.chats (
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     model_id TEXT NOT NULL,
+    pinned BOOLEAN DEFAULT FALSE,
+    pinned_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -26,6 +28,7 @@ CREATE TABLE IF NOT EXISTS public.messages (
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_chats_user_id ON public.chats(user_id);
 CREATE INDEX IF NOT EXISTS idx_chats_updated_at ON public.chats(updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_chats_pinned ON public.chats(pinned, pinned_at DESC);
 CREATE INDEX IF NOT EXISTS idx_messages_chat_id ON public.messages(chat_id);
 CREATE INDEX IF NOT EXISTS idx_messages_created_at ON public.messages(created_at);
 

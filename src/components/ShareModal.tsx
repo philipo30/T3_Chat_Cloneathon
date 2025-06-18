@@ -144,7 +144,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md share-modal-content">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Share2 className="w-5 h-5" />
@@ -163,14 +163,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({
               {existingShares.map((share) => (
                 <div
                   key={share.id}
-                  className="flex items-center justify-between p-3 border rounded-lg bg-muted/50"
+                  className="flex items-center justify-between p-3 border border-border rounded-lg bg-muted/50"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 text-sm">
                       {share.is_public ? (
-                        <Eye className="w-4 h-4 text-green-500" />
+                        <Eye className="w-4 h-4 text-green-500 dark:text-green-400" />
                       ) : (
-                        <EyeOff className="w-4 h-4 text-orange-500" />
+                        <EyeOff className="w-4 h-4 text-orange-500 dark:text-orange-400" />
                       )}
                       <span className="font-medium">
                         {share.is_public ? "Public" : "Password Protected"}
@@ -178,8 +178,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                       {share.expires_at && (
                         <span className={`text-xs px-2 py-1 rounded ${
                           isExpired(share.expires_at) 
-                            ? "bg-red-100 text-red-700" 
-                            : "bg-blue-100 text-blue-700"
+                            ? "bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-300" 
+                            : "bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300"
                         }`}>
                           {isExpired(share.expires_at) ? "Expired" : `Expires ${formatDate(share.expires_at)}`}
                         </span>
@@ -197,7 +197,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                       className="h-8 w-8 p-0"
                     >
                       {copiedShareId === share.share_id ? (
-                        <Check className="w-4 h-4 text-green-500" />
+                        <Check className="w-4 h-4 text-green-500 dark:text-green-400" />
                       ) : (
                         <Copy className="w-4 h-4" />
                       )}

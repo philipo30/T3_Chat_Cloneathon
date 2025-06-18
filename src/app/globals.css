@@ -2056,3 +2056,56 @@
 ::selection {
   background-color: theme('colors.selection');
 }
+
+/* Enhanced Toast Styling for Dark Purple Theme */
+[data-sonner-toaster] {
+  --normal-bg: rgb(var(--card));
+  --normal-border: rgb(var(--border));
+  --normal-text: rgb(var(--card-foreground));
+  --success-bg: rgba(34, 197, 94, 0.1);
+  --success-border: rgba(34, 197, 94, 0.3);
+  --success-text: rgb(34, 197, 94);
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --error-border: rgba(239, 68, 68, 0.3);
+  --error-text: rgb(239, 68, 68);
+}
+
+[data-sonner-toast] {
+  background: var(--normal-bg) !important;
+  border: 1px solid var(--normal-border) !important;
+  color: var(--normal-text) !important;
+  backdrop-filter: blur(8px);
+}
+
+[data-sonner-toast][data-type="success"] {
+  background: var(--success-bg) !important;
+  border-color: var(--success-border) !important;
+  color: var(--success-text) !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  background: var(--error-bg) !important;
+  border-color: var(--error-border) !important;
+  color: var(--error-text) !important;
+}
+
+[data-sonner-toast] [data-icon] {
+  color: inherit !important;
+}
+
+[data-sonner-toast] [data-content] {
+  color: inherit !important;
+}
+
+/* Dialog backdrop enhancement */
+[data-radix-dialog-overlay] {
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Share Modal specific styling */
+.share-modal-content {
+  background: rgb(var(--app-main-background)) !important;
+  border: 1px solid rgb(var(--app-main-border)) !important;
+  color: rgb(var(--foreground)) !important;
+}

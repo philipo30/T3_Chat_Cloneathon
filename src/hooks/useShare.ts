@@ -97,11 +97,12 @@ export function useShare() {
     onSuccess: (newChatId) => {
       // Invalidate user chats to show the new forked chat
       queryClient.invalidateQueries({ queryKey: ['user-chats'] })
-      toast.success('Chat forked successfully!')
+      toast.success('Chat forked successfully! Redirecting to your copy...')
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Failed to fork chat:', error)
-      toast.error('Failed to fork chat')
+      const errorMessage = error?.message || 'Failed to fork chat'
+      toast.error(errorMessage)
     },
   })
 
