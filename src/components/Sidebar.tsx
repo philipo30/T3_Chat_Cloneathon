@@ -226,7 +226,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
     group: { id: string; label: string; chats: Chat[]; priority: number };
     workspace: WorkspaceWithFoldersAndChats;
     onChatClick: (chatId: string) => void;
-  }> = ({ group, workspace, onChatClick }) => {
+    onPinToggle: (chat: Chat, event: React.MouseEvent) => void;
+    onDeleteChat: (chatId: string, event: React.MouseEvent) => void;
+  }> = ({ group, workspace, onChatClick, onPinToggle, onDeleteChat }) => {
     const [isCollapsed, setIsCollapsed] = React.useState(false);
 
     if (group.chats.length === 0) return null;
@@ -285,7 +287,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
                 item={chat}
                 sourceContainer={{ type: 'workspace', id: workspace.id }}
               >
-                <ChatItem chat={chat} onChatClick={onChatClick} />
+                <ChatItem
+                  chat={chat}
+                  onChatClick={onChatClick}
+                  onPinToggle={onPinToggle}
+                  onDeleteChat={onDeleteChat}
+                />
               </DraggableItem>
             ))}
           </DroppableArea>
@@ -389,6 +396,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
             group={group}
             workspace={workspace}
             onChatClick={onChatClick}
+            onPinToggle={onPinToggle}
+            onDeleteChat={onDeleteChat}
           />
         ))}
 
@@ -410,7 +419,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
   };
 
   // Component for rendering individual chat items
-  const ChatItem: React.FC<{ chat: Chat; onChatClick: (chatId: string) => void }> = ({ chat, onChatClick }) => {
+  const ChatItem: React.FC<{
+    chat: Chat;
+    onChatClick: (chatId: string) => void;
+    onPinToggle: (chat: Chat, event: React.MouseEvent) => void;
+    onDeleteChat: (chatId: string, event: React.MouseEvent) => void;
+  }> = ({ chat, onChatClick, onPinToggle, onDeleteChat }) => {
     return (
       <div
         className={`group flex items-center gap-2 p-2 rounded-md hover:bg-[rgb(var(--sidebar-component-button-hover-background))] transition-all duration-200 cursor-pointer transform hover:scale-[1.02] ${
@@ -434,7 +448,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
         size="sm"
         onClick={(e) => {
           e.stopPropagation();
-          handlePinToggle(chat, e);
+          onPinToggle(chat, e);
         }}
         disabled={isPinningChat || isUnpinningChat}
         className="opacity-0 group-hover:opacity-100 sidebar-pin-button w-6 h-6 p-0"
@@ -453,7 +467,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
         size="sm"
         onClick={(e) => {
           e.stopPropagation();
-          handleDeleteChat(chat.id, e);
+          onDeleteChat(chat.id, e);
         }}
         className="opacity-0 group-hover:opacity-100 sidebar-delete-button w-6 h-6 p-0"
         title="Delete chat"
@@ -554,7 +568,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onToggle, onWidthCh
                 item={chat}
                 sourceContainer={{ type: 'folder', id: folder.id }}
               >
-                <ChatItem chat={chat} onChatClick={onChatClick} />
+                <ChatItem
+                  chat={chat}
+                  onChatClick={onChatClick}
+                  onPinToggle={onPinToggle}
+                  onDeleteChat={onDeleteChat}
+                />
               </DraggableItem>
             ))}
           </div>

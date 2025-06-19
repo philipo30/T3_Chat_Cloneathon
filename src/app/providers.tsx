@@ -9,6 +9,7 @@ import React, { lazy, Suspense } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { ProjectProvider } from "@/contexts/ProjectContext";
 
 // Lazy load devtools to reduce bundle size and potential issues
 const ReactQueryDevtools = lazy(() =>
@@ -33,20 +34,22 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <QueryClientProvider client={queryClient}>
                 <AuthProvider>
                     <WorkspaceProvider>
-                        <ThemeProvider
-                            attribute="class"
-                            defaultTheme="dark"
-                            enableSystem={false}
-                            disableTransitionOnChange
-                        >
-                            <TooltipProvider>
-                                <>
-                                    <Toaster />
-                                    <Sonner />
-                                    {children}
-                                </>
-                            </TooltipProvider>
-                        </ThemeProvider>
+                        <ProjectProvider>
+                            <ThemeProvider
+                                attribute="class"
+                                defaultTheme="dark"
+                                enableSystem={false}
+                                disableTransitionOnChange
+                            >
+                                <TooltipProvider>
+                                    <>
+                                        <Toaster />
+                                        <Sonner />
+                                        {children}
+                                    </>
+                                </TooltipProvider>
+                            </ThemeProvider>
+                        </ProjectProvider>
                     </WorkspaceProvider>
                 </AuthProvider>
                 {process.env.NODE_ENV === 'development' && (

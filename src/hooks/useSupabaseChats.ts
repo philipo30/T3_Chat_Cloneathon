@@ -144,12 +144,23 @@ export function useSupabaseChats() {
 
   // Delete chat mutation
   const deleteChatMutation = useMutation({
-    mutationFn: (chatId: string) => chatService.deleteChat(chatId),
-    onSuccess: (_, chatId) => {
+    mutationFn: async (chatId: string) => {
+      // Get the chat data before deleting to access workspace_id
+      const chatData = queryClient.getQueryData(['user-chats', currentUser?.id]) as Chat[] | undefined
+      const chatToDelete = chatData?.find(chat => chat.id === chatId)
+
+      await chatService.deleteChat(chatId)
+      return { chatId, workspaceId: chatToDelete?.workspace_id }
+    },
+    onSuccess: ({ chatId, workspaceId }) => {
       queryClient.setQueryData(['user-chats', currentUser?.id], (old: Chat[] = []) =>
         old.filter((chat) => chat.id !== chatId)
       )
       queryClient.removeQueries({ queryKey: ['chat', chatId] })
+      // Invalidate workspace data to refresh the sidebar organization
+      if (workspaceId) {
+        queryClient.invalidateQueries({ queryKey: ['workspace-with-folders', workspaceId] })
+      }
     },
   })
 
